@@ -141,3 +141,5 @@ if not DEBUG:
     SECURE_SSL_REDIRECT=config('SECURE_SSL_REDIRECT', cast=bool)
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+GOOGLE_API_KEY = config('GOOGLE_API_KEY')
