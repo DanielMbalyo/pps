@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Add Admin{% endblock %}
+{% block content %}
+{% load static %}
+{% if user.staff %}
+    {% include 'commons/sidebar.html' %}
+    {% else %}
+    {% include 'commons/sidebar_clnt.html' %}
+    {% endif %}
+    <div class="main-panel">
+      <div class="content-wrapper">
+        <div class="row">
+          <div class="col-md-12 grid-margin">
+            <div class="row">
+              <div class="col-12 col-xl-8 mb-4 mb-xl-0">
+                <h3 class="font-weight-bold">Add Admins</h3>
+                <h6 class="font-weight-normal mb-0">All systems are running smoothly! </h6>
+              </div>
+              <div class="col-12 col-xl-4">
+               <div class="justify-content-end d-flex">
+                <div class="dropdown flex-md-grow-1 flex-xl-grow-0">
+                  {% if user.staff %}
+                  <a href="{% url 'manager:list' %}" class="btn btn-sm btn-outline-secondary">All Admins</a>
+                  {% endif %}
+                </div>
+               </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% include 'commons/messages.html' %}
+        <div class="row">
+          <div class="col-12 grid-margin stretch-card">
+            <div class="card">
+              <div class="card-body">
+                <h4 class="card-title">Admin Registration Form</h4>
+                <!-- <p class="card-description">
+                  Basic form elements
+                </p> -->
+                {% include 'commons/messages.html' %}
+                  {% for non_field_error in form.non_field.errors %}
+                  <div class="alert alert-danger" role="alert">{{ error }}</div>
+                  {% endfor %}
+                  {% if form.is_multipart %}
+                  <form enctype="multipart/form-data" method="post" class="forms-sample">
+                    {% else %}
+                    <form method="post" class="forms-sample">
+                      {% endif %}
+                      {% csrf_token %}
+                      {% for field in form %}
+                      <div class="form-group row">
+                        <label for="{{ field.id_for_field}}" class="col-sm-2 col-form-label">{{field.label}}</label>
+                        <div class="col-sm-offset-1 col-sm-9">
+                          {{field}}
+                        </div>
+                        {% for error in field.errors %}
+                        <small class="form-text text-muted-danger">{{ error }}</small>
+                        {% endfor %}
+                      </div>
+                      {% endfor%}
+                  <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                  <button type="reset" class="btn btn-light">Cancel</button>
+                </form>
+              </div>
+            </div>
+          </div>   
+      <!-- content-wrapper ends -->
+    </div>
+{% endblock %}
+{% block footer %}{% endblock %}

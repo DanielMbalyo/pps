@@ -1,0 +1,221 @@
+/* Height classes */
+.cover-100 {
+    height: 100vh;
+}
+.cover-75 {
+    height: 75vh;
+}
+.cover-50 {
+    height: 50vh;
+}
+.cover-25 {
+    height: 25vh;
+}
+
+/* Colour classes */
+.theme-primary {
+    background-color:#235347;
+    color: ghostwhite;
+}
+.theme-inverse {
+    background-color:ghostwhite;
+    color: #235347;
+}
+.primary{
+  color:#235347 !important;
+}
+.inverse{
+  color:ghostwhite !important;
+}
+
+.float-center {
+  display: flex;
+  align-items: center;
+}
+/* Transition classes */
+.scrolltop-mf {
+    position: relative;
+    display: none;
+}
+
+/* Typography classes */
+
+/* Picture classes */
+#front-cover{
+    background-image:  linear-gradient(rgba(0,0,0,.2),rgba(0,0,0,.2)), url('../images/cover.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+#about-home{
+  background-image:  linear-gradient(rgba(0,0,0,.2),rgba(0,0,0,.2)), url('../images/pic_1.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+#social-home{
+  background-image:  linear-gradient(rgba(0,0,0,.2),rgba(0,0,0,.2)), url('../images/pic_2.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+#company{
+  background-image:  linear-gradient(rgba(0,0,0,.1),rgba(0,0,0,.1)), url('../images/pic_1.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+#achievement{
+  background-image:  linear-gradient(rgba(0,0,0,.1),rgba(0,0,0,.1)), url('../images/pic_2.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+/* Sidebar classes */
+#wrapper {
+    overflow-x: hidden;
+  }
+  
+  #sidebar-wrapper {
+    min-height: 100vh;
+    margin-left: -15rem;
+    transition: margin 0.25s ease-out;
+  }
+  
+  #sidebar-wrapper .sidebar-heading {
+    padding: 40px 40px;
+    font-size: 1.5rem;
+  }
+  
+  #sidebar-wrapper .list-group {
+    width: 15rem;
+  }
+  
+  #page-content-wrapper {
+    min-width: 100vw;
+  }
+  
+  body.sb-sidenav-toggled #wrapper #sidebar-wrapper {
+    margin-left: 0;
+  }
+  
+  @media (min-width: 768px) {
+    #sidebar-wrapper {
+      margin-left: 0;
+    }
+  
+    #page-content-wrapper {
+      min-width: 0;
+      width: 100%;
+    }
+  
+    body.sb-sidenav-toggled #wrapper #sidebar-wrapper {
+      margin-left: -15rem;
+    }
+  }
+
+  .testimonial{
+    border-left: 3px solid #235347;
+    padding: 100px 0 100px 275px;
+    position: relative
+}
+.testimonial:before,
+.testimonial:after{
+    content: "";
+    width: 320px;
+    height: 55px;
+    border-right: 3px solid #235347;
+    position: absolute;
+    left: 0;
+}
+.testimonial:before{
+    border-top: 3px solid #235347;
+    top: 0;
+}
+.testimonial:after{
+    border-bottom: 3px solid #235347;
+    bottom: 0;
+}
+.testimonial .pic{
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    top: 100px;
+    left: 100px;
+}
+.testimonial .pic img{
+    width: 100%;
+    height: auto;
+}
+.testimonial .description{
+    font-size: 14px;
+    color: #7a7e82;
+    line-height: 27px;
+    position: relative;
+}
+.testimonial .description:before{
+    content: "\f10d";
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    position: absolute;
+    top: -70px;
+    left: 0;
+    font-size: 20px;
+    color: #7a7e82;
+}
+.testimonial .testimonial-title{
+    font-size: 22px;
+    font-weight:800;
+    color: #22272c;
+    text-transform: capitalize;
+}
+.testimonial .post{
+    display: block;
+    font-size: 15px;
+    font-weight: 700;
+    color :#235347;
+    margin-top: 10px;
+}
+.owl-theme .owl-controls{
+    text-align: right;
+    margin-top: 30px;
+}
+.owl-theme .owl-controls .owl-buttons div{
+    background: #235347;
+    border-radius: 0;
+    opacity: 1;
+    padding: 5px 10px;
+}
+.owl-prev:before,
+.owl-next:before{
+    content: "\f053";
+    font-family: "Font Awesome 5 Free"; font-weight: 900;
+    color: #fff;
+}
+.owl-next:before{
+    content: "\f054";
+}
+@media only screen and (max-width: 990px){
+    .testimonial{
+        padding: 80px 0 80px 265px;
+    }
+}
+@media only screen and (max-width: 767px){
+    .testimonial{
+        padding: 0;
+        border: none;
+    }
+    .testimonial:before,
+    .testimonial:after{
+        border: none;
+    }
+    .testimonial .pic{
+        position: relative;
+        top: 0;
+        left: 0;
+    }
+    .testimonial .description{
+        margin-top: 15px;
+    }
+    .testimonial .description:before{
+        content: "";
+    }
+}

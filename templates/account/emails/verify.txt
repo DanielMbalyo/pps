@@ -1,0 +1,11 @@
+Hello,
+
+Please follow the instructions to activate your account for {{ email }} :
+
+Click {{ path }} this link to activate your account.
+
+Once you activate, you will be required to change your password and then you can login!
+
+Thank you,
+
+Dev Team

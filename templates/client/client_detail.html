@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+{% load static %}
+{% include 'commons/sidebar_clnt.html' %}
+<div class="main-panel">
+  <div class="content-wrapper">
+    <div class="row">
+      <div class="col-md-12 grid-margin">
+        <div class="row">
+          <div class="col-12 col-xl-8 mb-4 mb-xl-0">
+            <h3 class="font-weight-bold">Welcome, {{user.get_name}}</h3>
+            <h6 class="font-weight-normal mb-0">All systems are running smoothly! </h6>
+          </div>
+          <div class="col-12 col-xl-4">
+           <div class="justify-content-end d-flex">
+            <div class="dropdown flex-md-grow-1 flex-xl-grow-0">
+              
+            </div>
+           </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% include 'commons/messages.html' %}
+    <div class="row">
+         <div class="col-md-3 mb-4 stretch-card transparent">
+            <div class="card card-tale">
+              <div class="card-body">
+                <p class="mb-4">Balance</p>
+                <p class="fs-30 mb-4">{{balance}}</p>
+                <p> </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 mb-4 stretch-card transparent">
+            <div class="card card-dark-blue">
+              <div class="card-body">
+                <p class="mb-4">No. Of Shops</p>
+                <p class="fs-30 mb-4">{% if commission %}{{commission}}{% else %} 0.00 {% endif %}</p>
+                <p> </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 mb-4 stretch-card transparent">
+            <div class="card card-light-blue">
+              <div class="card-body">
+                <p class="mb-4">No. Of Orders</p>
+                <p class="fs-30 mb-4">{% if investment %}{{investment}}{% else %} 0.00 {% endif %}</p>
+                <p> </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 mb-4 stretch-card transparent">
+            <div class="card card-light-danger">
+              <div class="card-body">
+                <p class="mb-4">No. Of Transactions</p>
+                <p class="fs-30 mb-4">{% if withdraw %}{{withdraw}}{% else %} 0.00 {% endif %}</p>
+                <p> </p>
+              </div>
+            </div>
+          </div>
+        </div>
+    <!-- <div class="row">
+      <div class="col-md-3 grid-margin grid-margin-md-0 stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Tigo</h4>
+            <p class="card-description">Njia Ya Malipo</p>
+            <ul class="list-star">
+              <li>*150*01#</li>
+              <li>Chagua Lipa Kwa Simu</li>
+              <li>Chagua Kwenda Tigo Pesa</li>
+              <li>Namba 7611318 jina GOLD INVESTMENTS</li>
+              <li>Ingiza kiasi Tsh 12,000 For activation na kuendela</li>
+              <li>Password ya mtumiaji</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 grid-margin grid-margin-md-0 stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Vodacom</h4>
+            <p class="card-description">Njia Ya Malipo</p>
+            <ul class="list-star">
+              <li>*150*00#</li>
+              <li>Chagua Tuma Pesa</li>
+              <li>Chagua Mitandao Mingine</li>
+              <li>Chagua Tigo Pesa</li>
+              <li>Namba 7611318 jina GOLD INVESTMENTS</li>
+              <li>Ingiza kiasi Tsh 12,000 For activation na kuendela</li>
+              <li>Password ya mtumiaji</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 grid-margin grid-margin-md-0 stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Airtel</h4>
+            <p class="card-description">Njia Ya Malipo</p>
+            <ul class="list-star">
+              <li>*150*60#</li>
+              <li>Chagua Tuma</li>
+              <li>Chagua Mitandao Mingine</li>
+              <li>Chagua Tigo Pesa</li>
+              <li>Chagua Lipa Kwa Tigo Pesa</li>
+              <li>Namba 7611318 jina GOLD INVESTMENTS</li>
+              <li>Ingiza kiasi Tsh 12,000 For activation na kuendela</li>
+              <li>Password ya mtumiaji</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 grid-margin grid-margin-md-0 stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Halotel</h4>
+            <p class="card-description">Njia Ya Malipo</p>
+            <ul class="list-star">
+              <li>*150*88#</li>
+              <li>Chagua Lipia Bidhaa</li>
+              <li>Chagua Lipa Kwa Tigo Pesa</li>
+              <li>Namba 7611318 jina GOLD INVESTMENTS</li>
+              <li>Ingiza kiasi Tsh 12,000 For activation na kuendela</li>
+              <li>Password ya mtumiaji</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>     -->
+  <!-- content-wrapper ends -->
+</div>
+
+{% endblock %}
+{% block footer %}{% endblock %}

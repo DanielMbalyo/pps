@@ -1,0 +1,46 @@
+  <nav class="sidebar sidebar-offcanvas" id="sidebar">
+    <ul class="nav">
+      <li class="nav-item">
+        <a class="nav-link" href="{{user.get_absolute_url}}">
+          <i class="icon-grid menu-icon"></i>
+          <span class="menu-title">Dashboard</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'manager:list' %}">
+          <i class="icon-paper menu-icon"></i>
+          <span class="menu-title">Admins</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'client:list' %}">
+          <i class="icon-paper menu-icon"></i>
+          <span class="menu-title">Clients</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'shop:list' %}">
+          <i class="icon-paper menu-icon"></i>
+          <span class="menu-title">Shops</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'product:list' %}">
+          <i class="icon-paper menu-icon"></i>
+          <span class="menu-title">Products</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'service:list' %}">
+          <i class="icon-paper menu-icon"></i>
+          <span class="menu-title">Services</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="">
+          <i class="icon-paper menu-icon"></i>
+          <span class="menu-title">Support</span>
+        </a>
+      </li>
+    </ul>
+  </nav>

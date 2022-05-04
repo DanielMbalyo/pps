@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+{% block head %}{% endblock %}
+{% block content %}
+{% load static%}
+<div class="container-scroller">
+  <div class="container-fluid page-body-wrapper full-page-wrapper">
+    <div class="content-wrapper d-flex align-items-center auth px-0">
+      <div class="row w-100 mx-0">
+        <div class="col-lg-4 mx-auto">
+          <div class="auth-form-light text-left py-5 px-4 px-sm-5">
+            <!-- <div class="pb-3">
+              <img src="{% static 'images/logo-mini.svg' %}" alt="logo" width="70px">
+            </div> -->
+            <h4>Register</h4>
+            <h6 class="font-weight-light">Signing up is easy. It only takes a few steps</h6>
+            {% include 'commons/messages.html' %}
+            {% for non_field_error in form.non_field.errors %}
+            <div class="alert alert-danger" role="alert">{{ error }}</div>
+            {% endfor %}
+            {% if form.is_multipart %}
+            <form enctype="multipart/form-data" method="post">
+              {% else %}
+              <form method="post">
+                {% endif %}
+                {% csrf_token %}
+                {% for field in form %}
+                <div class="form-group">
+                    {{field}}
+                  {% for error in field.errors %}
+                  <small class="form-text text-muted-danger">{{ error }}</small>
+                  {% endfor %}
+                </div>
+                {% endfor%}
+              <div class="mb-4">
+                <div class="form-check">
+                  <label class="form-check-label text-muted">
+                    <input type="checkbox" class="form-check-input">
+                    I agree to all Terms & Conditions
+                  </label>
+                </div>
+              </div>
+              <div class="mt-3">
+                <button class="btn btn-block btn-primary btn-lg font-weight-medium" type="submit">SIGN UP</button>
+              </div>
+              <div class="text-center mt-4 font-weight-light">
+                Already have an account? <a href="{% url 'account:login' %}" class="text-primary">Login</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- content-wrapper ends -->
+  </div>
+  <!-- page-body-wrapper ends -->
+</div>
+{% endblock %}
+{% block footer %}{% endblock%}

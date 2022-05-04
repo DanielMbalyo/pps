@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Activate Account{% endblock %}
+{% block content %}
+{% load static%}
+<section class="h-100 container-fluid" id="home">
+  <div class="row h-100">
+    <div class="text-center col-12 my-auto">
+      <div class="container">
+        <div class="row">
+          <div class="col-12 p-5">
+            <div class="container bg-light w-50 py-3 border rounded">
+              <div class="p-3">
+                <h1>Activate Account</h1>
+                <p>Please finalize activating your account {{ email }}</p>
+              </div>
+              <div class="py-3">
+                {% include 'commons/messages.html' %}
+                {% for non_field_error in form.non_field.errors %}
+                <div class="alert alert-danger" role="alert">{{ error }}</div>
+                {% endfor %}
+                {% if form.is_multipart %}
+                <form enctype="multipart/form-data" method="post">
+                  {% else %}
+                  <form method="post">
+                    {% endif %}
+                    {% csrf_token %}
+                    {% for field in form %}
+                    <div class="form-group row">
+                      <div class="mx-auto col-sm-11">
+                        {{field}}
+                      </div>
+                      {% for error in field.errors %}
+                      <small class="form-text text-muted-danger">{{ error }}</small>
+                      {% endfor %}
+                    </div>
+                    {% endfor%}
+                    <div class="form-group">
+                      <div class="col-12">
+                        <button type="submit" class="btn btn-md btn-outline-secondary btn-block">Submit</button>
+                      </div>
+                    </div>
+                  </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+{% block footer %}{% endblock %}

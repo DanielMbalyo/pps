@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    {% load static %}
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>PPS</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="{% static 'vendors/feather/feather.css' %}">
+    <link rel="stylesheet" href="{% static 'vendors/ti-icons/css/themify-icons.css' %}">
+    <link rel="stylesheet" href="{% static 'vendors/css/vendor.bundle.base.css' %}">
+    <!-- endinject -->
+    <!-- inject:css -->
+    <link rel="stylesheet" href="{% static 'css/vertical-layout-light/style.css' %}">
+    <!-- endinject -->
+    <!-- <link rel="shortcut icon" href="{% static 'images/favicon.png' %}" /> -->
+    <script>
+    setTimeout(function () {
+      if ($('#msg').length > 0) {
+        $('#msg').remove();
+      }
+    }, 15000)
+
+    </script>
+  </head>
+
+<body>
+  <div class="container-scroller">
+  {% block head %}
+  <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+    <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+      <a class="navbar-brand brand-logo mr-5" href="">PPS</a>
+      <a class="navbar-brand brand-logo-mini" href="">PPS</a>
+    </div>
+    <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+      <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+        <span class="icon-menu"></span>
+      </button>
+      <ul class="navbar-nav mr-lg-2">
+        <li class="nav-item nav-search d-none d-lg-block">
+          <div class="input-group">
+            <div class="input-group-prepend hover-cursor" id="navbar-search-icon">
+              <span class="input-group-text" id="search">
+                <i class="icon-search"></i>
+              </span>
+            </div>
+            <input type="text" class="form-control" id="navbar-search-input" placeholder="Search now" aria-label="search" aria-describedby="search">
+          </div>
+        </li>
+      </ul>
+      <ul class="navbar-nav navbar-nav-right">
+                 <li class="nav-item nav-profile dropdown">
+          <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
+              <i class="icon-ellipsis"></i>
+          </a>
+          <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+            <a class="dropdown-item" href="{% url 'account:settings' %}">
+              <i class="ti-settings text-primary"></i>
+              Settings
+            </a>
+            <a class="dropdown-item" href="{% url 'account:logout' %}">
+              <i class="ti-power-off text-primary"></i>
+              Logout
+            </a>
+          </div>
+        </li>
+        <!-- <li class="nav-item nav-settings d-none d-lg-flex">
+          <a class="nav-link" href="#">
+            <i class="icon-ellipsis"></i>
+          </a>
+        </li> -->
+      </ul>
+      <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+        <span class="icon-menu"></span>
+      </button>
+    </div>
+  </nav>
+  <div class="container-fluid page-body-wrapper">
+  {% endblock %}
+  {% block content %}
+  Body content
+  {% endblock %}
+  {% block footer %}
+<!-- <img class="mb-2" src="../assets/brand/bootstrap-solid.svg" alt="" width="24" height="24"> -->
+  <section class="container-fluid bg-light">
+    <footer class="footer py-4">
+      <div class="container">
+        <footer class="container mt-4 mb-lg-0">
+          <p class="float-right">
+            <!-- <a href="" class="px-2 primary">Home</a> &middot; 
+            <a href="" class="px-2 primary">Explore</a> &middot; 
+            <a href="" class="px-2 primary">About</a> &middot; 
+            <a href="" class="px-2 primary">FAQ</a> &middot; 
+            <a href="" class="px-2 primary">Support</a></p> -->
+          <p>&copy; 2021 PPS, Ltd. 
+            <a href="" class="px-2">
+              <span style="font-size: 18px; ">
+                <i class="fab fa-facebook-f primary"></i>
+              </span>
+            </a> &middot; 
+            <a href="" class="px-2">
+              <span style="font-size: 18px; ">
+                <i class="fab fa-instagram primary"></i>
+              </span>
+            </a> &middot; 
+            <a href="" class="px-2">
+              <span style="font-size: 18px; ">
+                <i class="fab fa-twitter primary"></i>
+              </span>
+            </a> &middot; 
+            <a href="" class="px-2">
+              <span style="font-size: 18px; ">
+                <i class="fab fa-youtube primary"></i>
+              </span>
+            </a></p>
+        </footer>
+      </div>
+    </footer>
+  </section>
+  {% endblock %}
+    </div>
+  </div>
+  <!-- plugins:js -->
+  <script src="{% static 'vendors/js/vendor.bundle.base.js' %}"></script>
+  <!-- endinject -->
+  <!-- inject:js -->
+  <script src="{% static 'js/off-canvas.js' %}"></script>
+  <script src="{% static 'js/hoverable-collapse.js' %}"></script>
+  <script src="{% static 'js/template.js' %}"></script>
+  <script src="{% static 'js/settings.js' %}"></script>
+  <!-- endinject -->
+  <!-- Custom js for this page-->
+  <script src="{% static 'js/dashboard.js' %}"></script>
+  <!-- End custom js for this page-->
+</body>
+
+</html>

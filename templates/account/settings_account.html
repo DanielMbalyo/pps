@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Settings{% endblock %}
+{% block content %}
+{% load static %}
+<div class="container-fluid">
+  <div class="row">
+    {% if user.staff %}
+    {% include 'commons/sidebar.html' %}
+    {% else %}
+    {% include 'commons/sidebar_clnt.html' %}
+    {% endif %}
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4 mb-0">
+      <div
+        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center px-3 pb-2 my-4 border-bottom">
+        <h1 class="h3">Account Settings</h1>
+      </div>
+      {% include 'commons/messages.html' %}
+      <section>
+        <div class='row p-3'>
+          <div class="col-4 p-5">
+            <h1 class="h4">Account Settings</h1>
+            <small>Change your account settings here.</small>
+          </div>
+          <div class='col-8'>
+            {% if user_form.is_multipart %}
+            <form enctype="multipart/form-data" method='POST' action='{% url "account:update_user" user.uid %}'>
+              {% else %}
+              <form method='POST' action='{% url "account:update_user" user.uid %}'>
+                {% endif %}
+                {% csrf_token %}
+                <input type='hidden' name='next' value='{{ request.build_absolute_uri}}' />
+                {% for field in user_form %}
+                <div class="form-group row">
+                  <div class="col-sm-offset-1 col-sm-9 mr-auto">
+                    {{field}}
+                  </div>
+                  {% for error in field.errors %}
+                  <small class="form-text text-muted-danger">{{ error }}</small>
+                  {% endfor %}
+                </div>
+                {% endfor%}
+                <button type="submit" class="btn btn-outline-secondary">Save Changes</button>
+              </form>
+          </div>
+      </section>
+      <hr>
+      <section>
+      <div class='row p-3'>
+        <div class="col-4 p-5">
+          <h1 class="h4">Profile Settings</h1>
+          <small>Change settings that identify you in our system here.</small>
+        </div>
+        <div class='col-8'>
+          {% if user_form.is_multipart %}
+          <form enctype="multipart/form-data" method='POST' action='{% url "account:update_user" user.uid %}'>
+            {% else %}
+            <form method='POST' action='{% url "account:update_user" user.uid %}'>
+              {% endif %}
+              {% csrf_token %}
+              <input type='hidden' name='next' value='{{ request.build_absolute_uri}}' />
+              {% for field in acc_form %}
+              <div class="form-group row">
+                <div class="col-sm-offset-1 col-sm-9 mr-auto">
+                  {{field}}
+                </div>
+                {% for error in field.errors %}
+                <small class="form-text text-muted-danger">{{ error }}</small>
+                {% endfor %}
+              </div>
+              {% endfor%}
+              <button type="submit" class="btn btn-outline-secondary">Save Changes</button>
+            </form>
+        </div>
+        </section>
+        <hr>
+        <section>
+          <div class='row p-3'>
+            <div class="col-4 p-5">
+              <h1 class="h4">Password Settings</h1>
+              <small>Change your password here.</small>
+            </div>
+            <div class='col-8'>
+              {% if pass_form.is_multipart %}
+              <form enctype="multipart/form-data" method='POST' action='{% url "account:password_change" %}'>
+                {% else %}
+                <form method='POST' action='{% url "account:password_change" %}'>
+                  {% endif %}
+                  {% csrf_token %}
+                  <input type='hidden' name='next' value='{{ request.build_absolute_uri}}' />
+                  {% for field in pass_form %}
+                  <div class="form-group row">
+                    <div class="col-sm-offset-1 col-sm-9 mr-auto">
+                      {{field}}
+                    </div>
+                    {% for error in field.errors %}
+                    <small class="form-text text-muted-danger">{{ error }}</small>
+                    {% endfor %}
+                  </div>
+                  {% endfor%}
+                  <button type="submit" class="btn btn-outline-secondary">Save Changes</button>
+            </div>
+            </form>
+          </div>
+        </section>
+        <hr>
+    </main>
+  </div>
+</div>
+{% endblock %}
+{% block footer %}{% endblock %}
