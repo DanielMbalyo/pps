@@ -14,6 +14,21 @@ class ClientForm(forms.ModelForm):
     phone = forms.CharField(label='Phone', widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder':'Phone'}
     ))
+    employer = forms.CharField(label='Employer', widget=forms.TextInput(
+        attrs={'class': 'form-control', 'placeholder':'Company Name'}
+    ))
+    branch = forms.CharField(label='Branch', widget=forms.TextInput(
+        attrs={'class': 'form-control', 'placeholder':'Branch Name'}
+    ))
+    office_phone = forms.CharField(label='Employer Contact', widget=forms.TextInput(
+        attrs={'class': 'form-control', 'placeholder':'Employer Contact'}
+    ))
+    months = forms.CharField(label='Duration', widget=forms.TextInput(
+        attrs={'class': 'form-control', 'placeholder':'Employment Duration'}
+    ))
+    nid = forms.CharField(label='NID', widget=forms.TextInput(
+        attrs={'class': 'form-control', 'placeholder':'National ID'}
+    ))
     email = forms.CharField(required=True, label='Email', widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder':'Email'}
     ))
@@ -36,7 +51,6 @@ class ClientForm(forms.ModelForm):
     class Meta:
         model = Client
         fields = [
-            "name",
-            "username",
-            "phone",
+            "name", "username", "phone", "employer",
+            "branch", "office_phone", "months", "nid" 
         ]

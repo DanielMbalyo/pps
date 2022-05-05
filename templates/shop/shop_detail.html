@@ -1,21 +1,26 @@
 {% extends "base.html" %}
-{% block title %}Dashboard{% endblock %}
+{% block title %}Shop{% endblock %}
 {% block content %}
 {% load static %}
+{% if user.staff %}
+{% include 'commons/sidebar.html' %}
+{% else %}
 {% include 'commons/sidebar_clnt.html' %}
+{% endif %}
 <div class="main-panel">
   <div class="content-wrapper">
     <div class="row">
       <div class="col-md-12 grid-margin">
         <div class="row">
           <div class="col-12 col-xl-8 mb-4 mb-xl-0">
-            <h3 class="font-weight-bold">Welcome {{user.get_name}}</h3>
-            <h6 class="font-weight-normal mb-0">All systems are running smoothly! </h6>
+            <h3 class="font-weight-bold">{{name}}</h3>
           </div>
           <div class="col-12 col-xl-4">
            <div class="justify-content-end d-flex">
             <div class="dropdown flex-md-grow-1 flex-xl-grow-0">
-              
+              {% if not user.staff %}
+                <a href="{% url 'product:user_create' slug %}" class="btn btn-sm btn-outline-secondary">Add Product</a>
+              {% endif %}
             </div>
            </div>
           </div>
@@ -24,112 +29,105 @@
     </div>
     {% include 'commons/messages.html' %}
     <div class="row">
-         <div class="col-md-3 mb-4 stretch-card transparent">
+         <div class="col-md-4 mb-4 stretch-card transparent">
             <div class="card card-tale">
               <div class="card-body">
-                <p class="mb-4">Balance</p>
-                <p class="fs-30 mb-4">{{balance}}</p>
+                <p class="mb-4">Revenue</p>
+                <p class="fs-30 mb-4">0.00</p>
                 <p> </p>
               </div>
             </div>
           </div>
-          <div class="col-md-3 mb-4 stretch-card transparent">
+          <div class="col-md-4 mb-4 stretch-card transparent">
             <div class="card card-dark-blue">
               <div class="card-body">
-                <p class="mb-4">Refferals</p>
-                <p class="fs-30 mb-4">{% if commission %}{{commission}}{% else %} 0.00 {% endif %}</p>
+                <p class="mb-4">Products</p>
+                <p class="fs-30 mb-4">{% if product %}{{product}}{% else %} 0 {% endif %}</p>
                 <p> </p>
               </div>
             </div>
           </div>
-          <div class="col-md-3 mb-4 stretch-card transparent">
+          <div class="col-md-4 mb-4 stretch-card transparent">
             <div class="card card-light-blue">
               <div class="card-body">
-                <p class="mb-4">Investments</p>
-                <p class="fs-30 mb-4">{% if investment %}{{investment}}{% else %} 0.00 {% endif %}</p>
-                <p> </p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-3 mb-4 stretch-card transparent">
-            <div class="card card-light-danger">
-              <div class="card-body">
-                <p class="mb-4">Withdraws</p>
-                <p class="fs-30 mb-4">{% if withdraw %}{{withdraw}}{% else %} 0.00 {% endif %}</p>
+                <p class="mb-4">Orders</p>
+                <p class="fs-30 mb-4">{% if orders %}{{orders}}{% else %} 0 {% endif %}</p>
                 <p> </p>
               </div>
             </div>
           </div>
     </div>
     <div class="row">
-      <div class="col-md-3 grid-margin grid-margin-md-0 stretch-card">
+      <div class="col-lg-12 grid-margin stretch-card">
         <div class="card">
           <div class="card-body">
-            <h4 class="card-title">Tigo</h4>
-            <p class="card-description">Njia Ya Malipo</p>
-            <ul class="list-star">
-              <li>*150*01#</li>
-              <li>Chagua Lipa Kwa Simu</li>
-              <li>Chagua Kwenda Tigo Pesa</li>
-              <li>Namba 7611318 jina GOLD INVESTMENTS</li>
-              <li>Ingiza kiasi Tsh 12,000 For activation na kuendela</li>
-              <li>Password ya mtumiaji</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3 grid-margin grid-margin-md-0 stretch-card">
-        <div class="card">
-          <div class="card-body">
-            <h4 class="card-title">Vodacom</h4>
-            <p class="card-description">Njia Ya Malipo</p>
-            <ul class="list-star">
-              <li>*150*00#</li>
-              <li>Chagua Tuma Pesa</li>
-              <li>Chagua Mitandao Mingine</li>
-              <li>Chagua Tigo Pesa</li>
-              <li>Namba 7611318 jina GOLD INVESTMENTS</li>
-              <li>Ingiza kiasi Tsh 12,000 For activation na kuendela</li>
-              <li>Password ya mtumiaji</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3 grid-margin grid-margin-md-0 stretch-card">
-        <div class="card">
-          <div class="card-body">
-            <h4 class="card-title">Airtel</h4>
-            <p class="card-description">Njia Ya Malipo</p>
-            <ul class="list-star">
-              <li>*150*60#</li>
-              <li>Chagua Tuma</li>
-              <li>Chagua Mitandao Mingine</li>
-              <li>Chagua Tigo Pesa</li>
-              <li>Chagua Lipa Kwa Tigo Pesa</li>
-              <li>Namba 7611318 jina GOLD INVESTMENTS</li>
-              <li>Ingiza kiasi Tsh 12,000 For activation na kuendela</li>
-              <li>Password ya mtumiaji</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3 grid-margin grid-margin-md-0 stretch-card">
-        <div class="card">
-          <div class="card-body">
-            <h4 class="card-title">Halotel</h4>
-            <p class="card-description">Njia Ya Malipo</p>
-            <ul class="list-star">
-              <li>*150*88#</li>
-              <li>Chagua Lipia Bidhaa</li>
-              <li>Chagua Lipa Kwa Tigo Pesa</li>
-              <li>Namba 7611318 jina GOLD INVESTMENTS</li>
-              <li>Ingiza kiasi Tsh 12,000 For activation na kuendela</li>
-              <li>Password ya mtumiaji</li>
-            </ul>
+            {% if products %}
+              <div class="table-responsive">
+                <table class="table table-striped table-borderless">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Price</th>
+                      <th>Sale Price</th>
+                      <th>Quantity</th>
+                      <th>Active</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for obj in products %}
+                    <tr>
+                      <td>{{obj.product.title}}</td>
+                      <td>{{obj.product.price}}</td>
+                      <td>{{obj.sale_price}}</td>
+                      <td>{{obj.quantity}}</td>
+                      <td>{{obj.active}}</td>
+                      <td>
+                        <div class="btn-group mr-2">
+                          <a href="" class="btn btn-sm btn-outline-secondary">Delete</a>
+                          <a href="{% url 'product:update' obj.slug %}" class="btn btn-sm btn-outline-secondary">Update</a>
+                        </div>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+              {% if is_paginated %}
+              <div class="pagination mb-3">
+                <span class="page-links">
+                  <div class="btn-group mr-2">
+                    {% if page_obj.has_previous %}
+                    <a href="{{ request.build_absolute_url}}?page={{ page_obj.previous_page_number }}"
+                      class="btn btn-sm btn-outline-secondary">Previous</a>
+                    {% endif %}
+                    <a href="" class="btn btn-sm btn-outline-secondary">
+                      <span class="page-current">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                      </span>
+                    </a>
+                    {% if page_obj.has_next %}
+                    <a href="{{ request.build_absolute_url}}?page={{ page_obj.next_page_number }}"
+                      class="btn btn-sm btn-outline-secondary">Next</a>
+                    {% endif %}
+                  </div>
+                </span>
+              </div>
+              {% endif %}
+              {% else %}
+              <p class='lead text-center pt-5'>
+                No products available<br>
+                {% if not user.staff %}
+                <a href="{% url 'product:user_create' slug %}">Add Products</a>
+                {% endif %}
+              </p>
+              {% endif %}
           </div>
         </div>
       </div>
     </div>    
+  <!-- content-wrapper ends -->
+</div>
   <!-- content-wrapper ends -->
 </div>
 

@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.contenttypes.models import ContentType
 from django.http import JsonResponse, HttpResponseRedirect, Http404
@@ -13,7 +14,7 @@ from src.address.models import Address
 
 from src.billing.models import BillingProfile
 from src.order.models import Order
-from src.product.models import Product
+from src.product.models import Product, UserProduct
 from .models import Cart, CartItem
 
 class CartView(LoginRequiredMixin, ListView):
@@ -34,18 +35,21 @@ class CartUpdateView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
         cart_obj, cart_created = Cart.objects.new_or_get(self.request)
         if cart_obj:
-            item_id = self.request.GET.get("product_id")
+            item_id = self.kwargs.get('slug')
             if item_id:
-                item_instance = get_object_or_404(Product, id=item_id)
+                item = UserProduct.objects.filter(slug=item_id).first()
                 qty = self.request.GET.get("qty", 1)
-                cart_item, created = CartItem.objects.get_or_create(
-                    cart=cart_obj, item=item_instance
+                cart_item = CartItem.objects.create(
+                    cart=cart_obj, product=item
                 )
-                if created:
-                    flash_message = "Successfully added to the cart"
-                    item_added = True
+                messages.success(self.request, "Successful Added To Cart")
+                item_added = True
                 cart_item.quantity = qty
                 cart_item.save()
+                return redirect(item.shop.get_front_url())
+            else:
+                messages.success(self.request, "Failed To Add To Cart")
+                return redirect(item.shop.get_front_url())
         return redirect("cart:list")
 
 class CartDeleteView(LoginRequiredMixin, View):
@@ -69,7 +73,6 @@ class CartClearView(LoginRequiredMixin, View):
                 cart_item = CartItem.objects.filter(cart=cart_obj)
                 cart_item.delete()
         return redirect("cart:list")
-
 
 class CheckoutView(LoginRequiredMixin, TemplateView):
     address_qs = None

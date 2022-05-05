@@ -12,6 +12,8 @@ from django.db.models import Sum
 from .forms import ManagerForm
 
 from src.client.models import Client
+from src.shop.models import Shop
+from src.product.models import Product
 
 User = get_user_model()
 
@@ -55,11 +57,9 @@ class ManagerView(LoginRequiredMixin, DetailView):
         count = 0
         context = super().get_context_data(*args, **kwargs)
         clients = Client.objects.all()
-        # context['open'] = Settings.objects.all().first().invest
-        # context['clients'] = Client.objects.all()[:10]
-        # context['active'] = Client.objects.filter(account__is_active=True).count()
-        # context['balance'] = Payment.objects.aggregate(Sum('balance'))['balance__sum']
-        # context['withdraws'] = Withdraw.objects.aggregate(Sum('amount'))['amount__sum']
+        context['products'] = Product.objects.all().count()
+        context['clients'] = Client.objects.all().count()
+        context['shops'] = Shop.objects.all().count()
         # context['investments'] = Investment.objects.aggregate(Sum('amount'))['amount__sum']
         return context
 

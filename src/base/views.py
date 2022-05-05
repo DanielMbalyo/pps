@@ -1,21 +1,35 @@
 from itertools import chain
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView, CreateView, ListView, UpdateView, DeleteView
 from django.shortcuts import redirect, render, reverse, get_object_or_404
 
-from src.support.forms import ContactForm, NewsLetterForm
-from src.support.models import Contact
-from src.project.models import Project
+from src.shop.models import Shop
 
-class HomeView(TemplateView):
+class HomeView(ListView):
+    model = Shop
     template_name = 'base/home.html'
-    form_class = NewsLetterForm
+    context_object_name = 'shops'
+    paginate_by = 20
+    count = 0
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context['testimony'] = Testimony.objects.all()
-        context['project'] = Project.objects.all()[:3]
-        context['gallery'] = Gallery.objects.all()[:6]
-        context['form'] = NewsLetterForm
+        context['count'] = self.count or 0
+        context['query'] = self.request.GET.get('q')
+        context['map_api_key'] = settings.MAP_API_KEY
         return context
+
+    def get_queryset(self, query=None):
+        request = self.request
+        query = request.GET.get('q', None)
+
+        if query is not None:
+            results = Shop.objects.search(query)
+            queryset_chain = chain(results)     
+            qs = sorted(queryset_chain, key=lambda instance: instance.pk,
+                reverse=True)
+            self.count = len(qs)
+            return qs
+        return Shop.objects.all()

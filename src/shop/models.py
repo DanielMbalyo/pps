@@ -11,6 +11,7 @@ class ShopManager(models.Manager):
         lookups = (
             models.Q(name__icontains=query) |
             # models.Q(username__icontains=query) |
+            # models.Q(username__icontains=query) |
             # models.Q(phone__icontains=query) |
             models.Q(slug__icontains=query)
         )
@@ -39,6 +40,9 @@ class Shop(models.Model):
 
     def get_absolute_url(self):
         return reverse("shop:detail", kwargs={"slug": self.slug})
+
+    def get_front_url(self):
+        return reverse("shop:front", kwargs={"slug": self.slug})
 
     def save(self, *args, **kwargs):
         if not self.slug:

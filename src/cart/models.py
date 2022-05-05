@@ -5,31 +5,24 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models.signals import pre_save, post_save, m2m_changed, post_delete
 
-from src.product.models import Product
+from src.product.models import Product, UserProduct
 
 User = settings.AUTH_USER_MODEL
 
 class CartItem(models.Model):
     cart = models.ForeignKey('Cart', on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(UserProduct, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
     product_total = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True,)
 
     def __str__(self):
-        return self.product.title
+        return self.product.product.title
 
-    def remove(self):
-        return self.product.remove_from_cart()
-
-    def get_pack(self):
-        return self.product.package
-
-def cart_item_pre_save_receiver(sender, instance, *args, **kwargs):
-    qty = instance.quantity
-    if int(qty) >= 1:
-        price = instance.product.price
-        instance.product_total = Decimal(qty) * Decimal(price)
-pre_save.connect(cart_item_pre_save_receiver, sender=CartItem)
+    def save(self, *args, **kwargs):
+        qty = self.quantity
+        if int(qty) >= 1:
+            price = self.product.sale_price
+            self.product_total = Decimal(qty) * Decimal(price)
 
 def cart_item_post_save_receiver(sender, instance, *args, **kwargs):
     instance.cart.subtotal += instance.product_total

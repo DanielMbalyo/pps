@@ -11,6 +11,8 @@ from .forms import ShopForm
 from django.db.models import Sum
 from django.http import JsonResponse
 
+from src.product.models import UserProduct
+
 class ShopListView(LoginRequiredMixin, ListView):
     model = Shop
     template_name = 'shop/shop_list.html'
@@ -37,6 +39,36 @@ class ShopListView(LoginRequiredMixin, ListView):
             return qs
         return Shop.objects.all()
 
+class ShopFrontView(ListView):
+    model = UserProduct
+    template_name = 'shop/shop_front.html'
+    context_object_name = 'object'
+    paginate_by = 20
+    count = 0
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['count'] = self.count or 0
+        context['query'] = self.request.GET.get('q')
+        shop = Shop.objects.filter(slug=self.kwargs.get('slug')).first()
+        context['name'] = shop.name
+        context['slug'] = self.kwargs.get('slug')
+        print(self.kwargs.get('slug'))
+        context['products'] = UserProduct.objects.filter(shop=shop)
+        return context
+
+    def get_queryset(self, query=None):
+        request = self.request
+        query = request.GET.get('q', None)
+        shop = Shop.objects.filter(slug=self.kwargs.get('slug')).first()
+        if query is not None:
+            results = UserProduct.objects.filter(shop=shop).search(query)
+            queryset_chain = chain(results)        
+            qs = sorted(queryset_chain, key=lambda instance: instance.pk, reverse=True)
+            self.count = len(qs)
+            return qs
+        return UserProduct.objects.filter(shop=shop)
+
 class ShopView(LoginRequiredMixin, ListView):
     model = Shop
     template_name = 'shop/shop_detail.html'
@@ -50,6 +82,11 @@ class ShopView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
+        shop = Shop.objects.filter(slug=self.kwargs.get('slug')).first()
+        context['name'] = shop.name
+        context['slug'] = self.kwargs.get('slug')
+        context['product'] = UserProduct.objects.filter(shop=shop).count()
+        context['products'] = UserProduct.objects.filter(shop=shop)
         # payment = Payment.objects.get(shop=self.get_object())
         # context['commission'] = Commission.objects.filter(shop=self.get_object(), active=True).aggregate(Sum('amount'))['amount__sum']
         # context['investment'] = Investment.objects.filter(shop=self.get_object()).aggregate(Sum('amount'))['amount__sum']

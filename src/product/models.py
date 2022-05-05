@@ -5,6 +5,8 @@ from django.shortcuts import reverse
 from django.utils.text import slugify
 from django.db.models import Q
 
+from src.shop.models import Shop
+
 def upload_location(instance, filename):
     random_ = random.randint(1, 3910209312)
     file_path = 'product/{random}/{title}-{filename}'.format(
@@ -41,8 +43,17 @@ class Product(models.Model):
             self.slug = slugify(self.title + "-" + str(calendar.timegm(time.gmtime())))
         super(Product, self).save(*args, **kwargs)
 
+class UserProductManager(models.Manager):
+    def search(self, query):
+        lookups = (
+            models.Q(product_title__icontains=query) |
+            models.Q(slug__icontains=query)
+        )
+        return self.filter(lookups).distinct()
+
 class UserProduct(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    shop = models.ForeignKey(Shop, on_delete=models.CASCADE)
     slug = models.SlugField(blank=True, unique=True)
     description = models.TextField()
     sale_price = models.DecimalField(decimal_places=2, max_digits=20, default=39.99)
@@ -50,7 +61,7 @@ class UserProduct(models.Model):
     active = models.BooleanField(default=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
-    # objects = ProductManager()
+    objects = UserProductManager()
 
     def get_absolute_url(self):
         return reverse("product:detail", kwargs={"slug": self.slug})
@@ -60,5 +71,5 @@ class UserProduct(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.title + "-" + str(calendar.timegm(time.gmtime())))
-        super(Product, self).save(*args, **kwargs)
+            self.slug = slugify(self.product.title + "-" + str(calendar.timegm(time.gmtime())))
+        super(UserProduct, self).save(*args, **kwargs)

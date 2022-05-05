@@ -22,6 +22,7 @@ BASE_URL = config('BASE_URL')
 INSTALLED_APPS = [
     'src.account',
     'src.address',
+    'src.base',
     'src.billing',
     'src.client',
     'src.cart',
@@ -142,4 +143,4 @@ if not DEBUG:
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-GOOGLE_API_KEY = config('GOOGLE_API_KEY')
+MAP_API_KEY = config('MAP_API_KEY')

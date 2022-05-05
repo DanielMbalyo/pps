@@ -9,7 +9,8 @@ from django.views.generic import (CreateView, DeleteView, DetailView, ListView, 
 from .forms import ProductForm, UserProductForm
 from .models import Product, UserProduct
 
-
+from src.shop.models import Shop
+ 
 class ProductListView(LoginRequiredMixin, ListView):
     model = Product
     template_name = "product/product_list.html"
@@ -69,6 +70,24 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
         messages.success(self.request, "Successfully Created")
         product.save()
         return super(ProductCreateView, self).form_valid(form)
+
+class UserProductCreateView(LoginRequiredMixin, CreateView):
+    form_class = UserProductForm
+    template_name = 'product/product_form.html'
+
+    def get_success_url(self):
+        return reverse('product:list')
+
+    def get_context_data(self, **kwargs):
+        context = super(UserProductCreateView, self).get_context_data(**kwargs)
+        return context
+
+    def form_valid(self, form):
+        product = form.save(commit=False)
+        product.shop = Shop.objects.filter(slug=self.kwargs.get('slug')).first()
+        messages.success(self.request, "Successfully Created")
+        product.save()
+        return super(UserProductCreateView, self).form_valid(form)
 
 class ProductUpdateView(LoginRequiredMixin, UpdateView):
     model = Product

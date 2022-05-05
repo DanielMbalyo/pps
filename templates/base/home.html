@@ -1,0 +1,78 @@
+{% extends "front.html" %}
+{% block title %}PPS{% endblock %}
+{% block content %}
+{% load static %}
+<div class="container-fluid" style='width: 100%; height: 100vh;'>
+    <div class="row">
+        <div class="col-8" id="map" style='width: 100%; height: 100vh;'></div>
+        <div class="col 4">
+            <div class="container">
+                <div class="row">
+                  <div class="col-12 px-5 pb-3">
+                    <form method='GET' class='row mt-5' action=".">
+                      <div class="input-group form-group-no-border mx-auto" style="margin-bottom: 0px; font-size: 32px;">
+                        <div class="form-group mb-2 col-12">
+                          <input name="q" class="form-control form-control mx-auto" type="text" placeholder="{% if query %} {{ query}} {% else %} Search for Shops {% endif %}">
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+            </div>
+            {% if shops %}
+            <div class="no-gutters row px-1">
+                {% for obj in shops %}<a href=""></a>
+                <div class="col-12 px-1 pb-2">
+                
+                <div class="card-body py-0 p-1">
+                    <h5 class="card-title mb-0">{{ obj.name }}</h5>
+                    
+                    <div class="row">
+                        <div class="col-9">
+                            <p class="card-text m-0 px-1"><small class="m-0">{{ obj.location }}</small></p>
+                            <p class="card-text m-0 px-1"><small class="">X Meters Away</small></p>
+                        </div>
+                        <div class="col-3 pt-2"><div class="btn-group py-auto">
+                            <button type="button" class="btn btn-sm btn-outline-primary">
+                            <a href="{% url 'shop:front' obj.slug %}">View</a></button>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                {% endfor %}
+            </div><br>
+            {% else %}
+            <p class='my-5 py-5 lead text-center'>
+                No Shops Have Been Registered.<br>
+            </p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    if ( navigator.geolocation ) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            var lng = position.coords.longitude;
+            var lat = position.coords.latitude;                    
+            mapboxgl.accessToken = 'pk.eyJ1IjoiZGFubWJhbHlvIiwiYSI6ImNsMnJ4MWt1ZDAweDgza2xtZXBmOHhqNHIifQ.bknxyhEpG3_g4TwTlFxxKA';
+            var map = new mapboxgl.Map({
+                container: 'map',          
+                style: 'mapbox://styles/mapbox/streets-v11',
+                center: [ lng, lat ], // [ lng, lat ]
+                zoom: 13
+            });
+            var marker = new mapboxgl.Marker()
+                .setLngLat([lng, lat])
+                .setPopup(new mapboxgl.Popup().setHTML("<p>{{ user.get_name }}</p>"))
+                .addTo(map);
+            {% for shop in shops %}
+            var marker = new mapboxgl.Marker()
+                .setLngLat(["{{ shop.lon }}", "{{ shop.lat }}"])
+                .setPopup(new mapboxgl.Popup().setHTML("<p>{{ shop.name }}</p>"))
+                .addTo(map);
+            {% endfor %}
+        });
+    }
+</script>
+{% endblock %}
