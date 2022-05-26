@@ -11,6 +11,8 @@ from .models import Client
 from .forms import ClientForm
 from django.db.models import Sum
 
+from src.shop.models import Shop
+
 User = get_user_model()
 
 class ClientListView(LoginRequiredMixin, ListView):
@@ -52,8 +54,8 @@ class ClientView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        # payment = Payment.objects.get(client=self.get_object())
-        # context['commission'] = Commission.objects.filter(client=self.get_object(), active=True).aggregate(Sum('amount'))['amount__sum']
+        shops = Shop.objects.filter(account=self.get_object())
+        context['shops'] = shops.count() 
         # context['investment'] = Investment.objects.filter(client=self.get_object()).aggregate(Sum('amount'))['amount__sum']
         # context['balance'] = payment.balance
         # context['withdraw'] = Withdraw.objects.filter(client=self.get_object()).aggregate(Sum('amount'))['amount__sum']

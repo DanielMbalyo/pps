@@ -23,21 +23,21 @@
             <div class="no-gutters row px-1">
                 {% for obj in shops %}<a href=""></a>
                 <div class="col-12 px-1 pb-2">
-                
-                <div class="card-body py-0 p-1">
-                    <h5 class="card-title mb-0">{{ obj.name }}</h5>
-                    
-                    <div class="row">
-                        <div class="col-9">
-                            <p class="card-text m-0 px-1"><small class="m-0">{{ obj.location }}</small></p>
-                            <p class="card-text m-0 px-1"><small class="">X Meters Away</small></p>
-                        </div>
-                        <div class="col-3 pt-2"><div class="btn-group py-auto">
-                            <button type="button" class="btn btn-sm btn-outline-primary">
-                            <a href="{% url 'shop:front' obj.slug %}">View</a></button>
+                    <div class="card-body py-0 p-1">
+                        <h5 class="card-title mb-0">{{ obj.name }}</h5>
+                        <div class="row">
+                            <div class="col-9">
+                                <p class="card-text m-0 px-1"><small class="m-0">{{ obj.location }}</small></p>
+                                <p class="card-text m-0 px-1"><small class="">X Meters Away</small></p>
+                            </div>
+                            <div class="col-3 pt-2">
+                                <div class="btn-group py-auto">
+                                    <button type="button" class="btn btn-sm btn-outline-primary">
+                                    <a href="{% url 'shop:front' obj.slug %}">View</a></button>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
                 </div>
                 {% endfor %}
             </div><br>
@@ -62,7 +62,7 @@
                 center: [ lng, lat ], // [ lng, lat ]
                 zoom: 13
             });
-            var marker = new mapboxgl.Marker()
+            var marker = new mapboxgl.Marker({ color: 'black'})
                 .setLngLat([lng, lat])
                 .setPopup(new mapboxgl.Popup().setHTML("<p>{{ user.get_name }}</p>"))
                 .addTo(map);

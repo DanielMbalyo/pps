@@ -38,9 +38,11 @@
                       <thead>
                         <tr>
                           <th>Name</th>
-                          <!-- <th>UserName</th> -->
                           <th>Phone</th>
-                          <th>Email</th>
+                          <th>Employer</th>
+                          <th>Branch</th>
+                          <th>Duration</th>
+                          <th>NID</th>
                           <th>Actions</th>
                         </tr>
                       </thead>
@@ -48,9 +50,11 @@
                         {% for obj in object %}
                         <tr>
                           <td>{{obj.name}}</td>
-                          <!-- <td>{{obj.username}}</td> -->
                           <td>{{obj.phone}}</td>
-                          <td>{{obj.account.email}}</td>
+                          <td>{{obj.employer}}</td>
+                          <td>{{obj.branch}}</td>
+                          <td>{{obj.months}}</td>
+                          <td>{{obj.nid}}</td>
                           <td>
                             <div class="btn-group mr-2">
                               {% if not obj.account.is_active %}
