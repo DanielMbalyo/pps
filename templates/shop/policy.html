@@ -1,0 +1,56 @@
+{% extends "front.html" %}
+{% block title %}Policies{% endblock %}
+{% block content %}
+{% load static %}
+<div class="container-fluid bg-light">
+  <div class="row h-25">
+    <div class="text-left col-12 my-auto">
+      <div class="container">
+        <div class="row">
+          <div class="col-12 p-5">
+            <h1 class="display-4 primary">Shop Terms And Conditions</h1>
+            <p class="lead">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do 
+              eiusmod ut labore et dolore magna aliqua.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<section class="container-fluid h-75">
+  <div class="row h-100">
+    <div class="text-left col-12 my-auto">
+      <div class="container">
+        <div class="row">
+          <div class="col-12 p-5">
+            <div class="container">
+              <p class="lead">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do 
+                eiusmod ut labore et dolore magna aliqua.</p>
+              <p class="lead">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do 
+                eiusmod ut labore et dolore magna aliqua.</p>
+              <p class="lead">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do 
+                eiusmod ut labore et dolore magna aliqua.</p>
+              <form enctype="multipart/form-data" method="post">
+                <div class="form-group mb-4">
+                  <div class="form-check">
+                    <label class="form-check-label text-secondary">
+                      <input type="checkbox" class="form-check-input">
+                      I agree to all Terms & Conditions
+                    </label>
+                  </div>
+                </div>
+                <div class="form-group"> 
+                  <div class="col-10"> 
+                    <a href="{% url 'shop:create' %}" class="btn btn-md btn-primary btn-block">Finalise</a> 
+                  </div> 
+                </div> 
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+{% endblock %}

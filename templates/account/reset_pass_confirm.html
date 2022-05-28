@@ -1,19 +1,48 @@
-{% extends "base.html" %}
-{% block title %}Reset Password{% endblock %}
-{% block head %}{% endblock %}
+{% extends "front.html" %}
+{% block title %}PPS{% endblock %}
+{% block head %}{% include 'commons/home_nav.html' %}{% endblock %}
 {% block content %}
-{% load static%}
-<div class="container-scroller">
-  <div class="container-fluid page-body-wrapper full-page-wrapper">
-    <div class="content-wrapper d-flex align-items-center auth px-0">
-      <div class="row w-100 mx-0">
-        <div class="col-lg-4 mx-auto">
-          <div class="auth-form-light text-left py-5 px-4 px-sm-5">
-            <!-- <div class="pb-3">
-              <img src="{% static 'images/logo-mini.svg' %}" alt="logo" width="70px">
-            </div> -->
-            <h4>Reset Password</h4>
-            <h6 class="font-weight-light">Please provide new password.</h6>
+{% load static %}
+<style type="text/css">
+#mobile{
+  background-image: linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)), url('{% static "images/phone.jpg" %}');
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+@media only screen and (max-width: 768px) {
+.display-2{
+  font-size: 50px;
+}
+.display-4{
+  font-size: 34px;
+}
+}
+
+@media only screen and (max-width: 425px) {
+  .display-2{
+  font-size: 50px;
+}
+.display-4{
+  font-size: 34px;
+}
+}
+</style>
+<section class="container-fluid" style="background-color:darkcyan; color: ghostwhite; height: 100vh;">
+  <div class="row h-100">
+    <div class="text-left col-md-6 col-12 d-none d-md-block" id="mobile">
+      <div class="container">
+        <div class="row">
+          <div class="col-12"></div>
+        </div>
+      </div>
+    </div>
+    <div class="text-center text-lg-left col-md-6 col-12 my-auto">
+      <div class="container">
+        <div class="row">
+          <div class="col-12 p-5">
+            <h4 class="mx-4">Reset Password</h4>
+            <p class="lead mx-4 mb-5">Please provide new password.</p>
             {% include 'commons/messages.html' %}
             {% for non_field_error in form.non_field.errors %}
             <div class="alert alert-danger" role="alert">{{ error }}</div>
@@ -33,16 +62,42 @@
                 </div>
                 {% endfor%}
               <div class="mt-3">
-                <button class="btn btn-block btn-primary btn-lg font-weight-medium" type="submit">SUBMIT</button>
+                <button class="btn btn-block btn-primary btn-lg font-weight-medium" type="submit">Submit</button>
               </div>
             </form>
           </div>
         </div>
       </div>
     </div>
-    <!-- content-wrapper ends -->
   </div>
-  <!-- page-body-wrapper ends -->
-</div>
+</section>
 {% endblock %}
-{% block footer %}{% endblock %}
+{% block footer %}
+<!-- <footer class="footer py-3" style="background-color:darkcyan; color: ghostwhite;">
+  <div class="container">
+      <div class="row">
+          <div class="col-lg-6 my-auto h-100 text-center text-lg-left  text-white">
+              <ul class="list-inline mb-2">
+                <li class="list-inline-item"><a href="" class="text-white">Terms of &nbsp;Use</a></li>
+                <li class="list-inline-item"><span>⋅</span></li>
+                <li class="list-inline-item"><a href="" class="text-white">Privacy Policy</a></li>
+                <li class="list-inline-item"><span>⋅</span></li>
+                <li class="list-inline-item"><a href="" class="text-white">About</a></li>
+                <li class="list-inline-item"><span>⋅</span></li>
+                <li class="list-inline-item"><a href="" class="text-white">Contact</a></li>
+                <li class="list-inline-item"><span>⋅</span></li>
+                <li class="list-inline-item"><a href="" class="text-white">FAQ</a></li>
+              </ul>
+              <p class="small mb-4 mb-lg-0 text-white">© PPS 2021. All Rights Reserved.</p>
+          </div>
+          <div class="col-lg-6 my-auto h-100 text-center text-lg-right">
+              <ul class="list-inline mb-0">
+                  <li class="list-inline-item"><a href="#"><i class="fa fa-facebook fa-2x fa-fw text-white"></i></a></li>
+                  <li class="list-inline-item"><a href="#"><i class="fa fa-twitter fa-2x fa-fw text-white"></i></a></li>
+                  <li class="list-inline-item"><a href="#"><i class="fa fa-instagram fa-2x fa-fw text-white"></i></a></li>
+              </ul>
+          </div>
+      </div>
+  </div>
+</footer> -->
+{% endblock %}

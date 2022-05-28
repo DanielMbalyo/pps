@@ -8,9 +8,6 @@ class ClientForm(forms.ModelForm):
     name = forms.CharField(label='Name', widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder':'Name'}
     ))
-    username = forms.CharField(label='Username', widget=forms.TextInput(
-        attrs={'class': 'form-control', 'placeholder':'Username'}
-    ))
     phone = forms.CharField(label='Phone', widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder':'Phone'}
     ))
@@ -29,18 +26,6 @@ class ClientForm(forms.ModelForm):
     nid = forms.CharField(label='NID', widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder':'National ID'}
     ))
-    email = forms.CharField(required=True, label='Email', widget=forms.TextInput(
-        attrs={'class': 'form-control', 'placeholder':'Email'}
-    ))
-    password = forms.CharField(required=True, label='Password', widget=forms.PasswordInput(
-        attrs={'class': 'form-control', 'placeholder':'Password'}
-    ))
-
-    def clean_email(self):
-        email = self.cleaned_data['email']
-        if User.objects.filter(email=email).exists():
-            raise forms.ValidationError("Email already exists")
-        return email
 
     def clean_phone(self):
         phone = self.cleaned_data['phone']
@@ -51,6 +36,6 @@ class ClientForm(forms.ModelForm):
     class Meta:
         model = Client
         fields = [
-            "name", "username", "phone", "employer",
+            "name", "phone", "employer",
             "branch", "office_phone", "months", "nid" 
         ]

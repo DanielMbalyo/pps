@@ -7,6 +7,11 @@ from django.contrib.auth.forms import (
 
 User = get_user_model()
 
+CATEGORIES = (
+    ('client', 'Client Account'),
+    ('shop', 'Vendor Account'),
+)
+
 class UserAdminCreationForm(forms.ModelForm):
     """A form for creating new users. Includes all the required
     fields, plus a repeated password."""
@@ -46,6 +51,19 @@ class UserAdminChangeForm(forms.ModelForm):
 
     def clean_password(self):
         return self.initial["password"]
+
+class RegistrationForm(forms.Form):
+    email = forms.CharField(required=True, label='Email', widget=forms.TextInput(
+        attrs={'class': 'form-control', 'placeholder':'Email'}
+    ))
+    type = forms.ChoiceField(label='Account Type',
+        choices=CATEGORIES, required=True,  widget=forms.Select(attrs={'class': 'form-control'}),)
+    
+    # def clean_email(self):
+    #     email = self.cleaned_data['email']
+    #     if User.objects.filter(email=email).exists():
+    #         raise forms.ValidationError("Email already exists")
+    #     return email
 
 class LoginForm(forms.Form):
     """A form for login users. Includes all the required

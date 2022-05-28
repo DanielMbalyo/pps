@@ -7,6 +7,9 @@ from django.shortcuts import redirect, render, reverse, get_object_or_404
 
 from src.shop.models import Shop
 
+class LandingView(TemplateView):
+    template_name = 'base/landing.html'
+
 class HomeView(ListView):
     model = Shop
     template_name = 'base/home.html'

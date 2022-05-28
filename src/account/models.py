@@ -52,6 +52,7 @@ class User(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     staff = models.BooleanField(default=False)
     admin = models.BooleanField(default=False)
+    vendor = models.BooleanField(default=False)
 
     objects = UserManager()
 
@@ -60,12 +61,16 @@ class User(AbstractBaseUser):
     def get_name(self):
         if self.staff:
             return self.manager_set.all().first().name
+        elif self.vendor:
+            return self.shop_set.all().first().name
         else:
             return self.client_set.all().first().name
 
     def get_acc(self):
         if self.staff:
             return self.manager_set.all().first()
+        elif self.vendor:
+            return self.shop_set.all().first()
         else:
             return self.client_set.all().first()
 
@@ -75,6 +80,8 @@ class User(AbstractBaseUser):
     def get_absolute_url(self):
         if self.staff:
             return self.manager_set.all().first().get_absolute_url()
+        elif self.vendor:
+            return self.shop_set.all().first().get_absolute_url()
         else:
             return self.client_set.all().first().get_absolute_url()
 
@@ -188,8 +195,8 @@ def pre_save_email_activation(instance, *args, **kwargs):
             instance.key = unique_key_generator(instance)
 pre_save.connect(pre_save_email_activation, sender=EmailActivation)
 
-def post_save_user_create_reciever(instance, created, *args, **kwargs):
-    if created and not instance.admin:
-        obj = EmailActivation.objects.create(user=instance, email=instance.email)
-        obj.send_activation()
-post_save.connect(post_save_user_create_reciever, sender=User)
+# def post_save_user_create_reciever(instance, created, *args, **kwargs):
+#     if created and not instance.admin:
+#         obj = EmailActivation.objects.create(user=instance, email=instance.email)
+#         obj.send_activation()
+# post_save.connect(post_save_user_create_reciever, sender=User)

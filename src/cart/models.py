@@ -18,16 +18,17 @@ class CartItem(models.Model):
     def __str__(self):
         return self.product.product.title
 
-    def save(self, *args, **kwargs):
-        qty = self.quantity
-        if int(qty) >= 1:
-            price = self.product.sale_price
-            self.product_total = Decimal(qty) * Decimal(price)
+def cart_item_pre_save_receiver(sender, instance, *args, **kwargs):
+    qty = instance.quantity
+    if int(qty) >= 1:
+        price = instance.product.sale_price
+        instance.product_total = Decimal(qty) * Decimal(price)
+pre_save.connect(cart_item_pre_save_receiver, sender=CartItem)
 
 def cart_item_post_save_receiver(sender, instance, *args, **kwargs):
     instance.cart.subtotal += instance.product_total
 post_save.connect(cart_item_post_save_receiver, sender=CartItem)
-post_delete.connect(cart_item_post_save_receiver, sender=CartItem)
+# post_delete.connect(cart_item_post_save_receiver, sender=CartItem)
 
 class CartManager(models.Manager):
     def new_or_get(self, request):

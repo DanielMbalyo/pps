@@ -3,24 +3,19 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model, login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import (
-                                       PasswordChangeView,
-                                       PasswordResetConfirmView,
-                                       PasswordResetView)
+    PasswordChangeView, PasswordResetConfirmView, PasswordResetView)
 from django.shortcuts import redirect, render, reverse, get_object_or_404
 from django.utils.safestring import mark_safe
 from django.views.generic import FormView, TemplateView, UpdateView, CreateView
-from src.client.models import Client
-from src.client.forms import ClientForm
-from src.manager.forms import ManagerForm
 
 from .forms import (ActivateForm, ChangePassForm, LoginForm, ResetPassForm,
-                    SetPassForm, UserForm)
+                    SetPassForm, UserForm, RegistrationForm)
 from .models import EmailActivation
 
 User = get_user_model()
 
-class RegisterView(CreateView):
-    form_class = ClientForm
+class RegisterView(FormView):
+    form_class = RegistrationForm
     template_name = 'account/register.html'
 
     def get_success_url(self):
@@ -28,23 +23,46 @@ class RegisterView(CreateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context['title'] = 'Create Client'
+        context['title'] = 'Create Account'
         return context
 
-    def form_valid(self, form):
-        email = form.cleaned_data['email']
-        password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(15))
-        client = form.save(commit=False)
-        client.account = User.objects.create_user(email=email, password=password)
-        messages.success(self.request, "Check Your Email Inbox For Confirmation Email.")
-        client.save()
-        return super(RegisterView, self).form_valid(form)
-    
-    def form_invalid(self, form):
-        messages.success(self.request, "Registration Failed Make Sure Your Data Are Correct")
-        return super(RegisterView, self).form_invalid(form)
+    def post(self, form):
+        email = self.request.POST.get("email")
+        type = self.request.POST.get("type")
+        self.request.session['email'] = email
+        self.request.session['type'] = type
+        if type == 'client':
+            return redirect(reverse('client:policy'))
+        else:
+            return redirect(reverse('shop:policy'))
 
-class ActivateView(FormView):
+class AdminActivateView(TemplateView):
+    template_name = 'accounts/resend_activation.html'
+    key = None
+
+    def get(self, request, *args, key=None, **kwargs):
+        self.key = key
+        if key is not None:
+            if request.user.staff:
+                qs = User.objects.filter(uid__iexact=key)
+                if qs.count() > 0:
+                    temp = EmailActivation.objects.create(user=qs.first(), email=qs.first().email)
+                    temp.send_activation()
+                    messages.success(request, "Account Is Now Activated.")
+                    if qs.first().staff:
+                        return redirect('manager:list')
+                    elif qs.first().vendor:
+                        return redirect('shop:list')
+                    else:
+                        return redirect('client:list')
+            else:
+                messages.success(request, "Account Is Not Activated.")
+                return redirect('account:login')
+        else:
+            messages.success(request, "Account Is Not Activated.")
+            return redirect('client:list')
+
+class EmailActivateView(FormView):
     form_class = ActivateForm
     template_name = 'accounts/resend_activation.html'
     key = None
@@ -101,15 +119,8 @@ class DeactivateView(TemplateView):
                 qs.is_active=False
                 qs.save()
                 messages.success(request, "User is Deactivated.")
-            else:
-                qs.is_active=True
-                qs.save()
-                messages.success(request, "User is Activated.")
             if qs.staff:
-                if qs.sponsor:
-                    return redirect('manager:list')
-                else:        
-                    return redirect('manager:list')
+                return redirect('manager:list')
             else:
                 return redirect('client:list')
 

@@ -18,7 +18,7 @@ class ShopManager(models.Manager):
         return self.filter(lookups).distinct()
 
 class Shop(models.Model):
-    account = models.ForeignKey(Client, on_delete=models.CASCADE)
+    account = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
     phone = models.CharField(max_length=50, unique=True)
     location = models.CharField(max_length=200, blank=True, null=True)

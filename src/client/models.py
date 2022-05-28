@@ -14,7 +14,6 @@ class ClientManager(models.Manager):
     def search(self, query):
         lookups = (
             models.Q(name__icontains=query) |
-            models.Q(username__icontains=query) |
             models.Q(phone__icontains=query) |
             models.Q(slug__icontains=query)
         )
@@ -23,7 +22,6 @@ class ClientManager(models.Manager):
 class Client(models.Model):
     account = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
-    username = models.CharField(max_length=200, unique=True)
     location = models.CharField(max_length=200, blank=True, null=True)
     employer = models.CharField(max_length=200,  default="NIL")
     branch = models.CharField(max_length=200, blank=True, null=True)
@@ -38,7 +36,7 @@ class Client(models.Model):
     objects = ClientManager()
 
     def __str__(self):
-        return '{}, {}'.format(self.name, self.account.email)
+        return '{}'.format(self.name)
 
     class Meta:
         ordering = ["-timestamp"]

@@ -54,6 +54,11 @@
                         <td>{{obj.timestamp}}</td>
                         <td>
                           <div class="btn-group mr-2">
+                            {% if not obj.account.is_active %}
+                              <a href="{% url 'account:admin_activate' obj.account.uid %}" class="btn btn-sm btn-outline-secondary">Activate</a>
+                            {% else %}
+                              <a href="{% url 'account:admin_deactivate' obj.account.uid %}" class="btn btn-sm btn-outline-secondary">Deactivate</a>
+                            {% endif %}
                             <a href="{% url 'manager:update' obj.slug %}" class="btn btn-sm btn-outline-secondary">Update</a>
                           </div>
                         </td>

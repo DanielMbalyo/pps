@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import reverse, get_object_or_404
 from django.views.generic import (
-    CreateView, UpdateView, DetailView, ListView
+    CreateView, UpdateView, DetailView, ListView, TemplateView
 )
 from itertools import chain
 from .models import Client
@@ -14,6 +14,9 @@ from django.db.models import Sum
 from src.shop.models import Shop
 
 User = get_user_model()
+
+class ClientPolicyView(TemplateView):
+    template_name = 'client/policy.html'
 
 class ClientListView(LoginRequiredMixin, ListView):
     model = Client
@@ -54,8 +57,6 @@ class ClientView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        shops = Shop.objects.filter(account=self.get_object())
-        context['shops'] = shops.count() 
         # context['investment'] = Investment.objects.filter(client=self.get_object()).aggregate(Sum('amount'))['amount__sum']
         # context['balance'] = payment.balance
         # context['withdraw'] = Withdraw.objects.filter(client=self.get_object()).aggregate(Sum('amount'))['amount__sum']
@@ -63,23 +64,20 @@ class ClientView(LoginRequiredMixin, ListView):
 
 class ClientCreateView(CreateView):
     form_class = ClientForm
-    template_name = 'client/client_form.html'
+    template_name = 'client/form.html'
 
     def get_success_url(self):
         return reverse('client:list')
 
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-        context['title'] = 'Create Client'
-        return context
-
     def form_valid(self, form):
-        email = form.cleaned_data['email']
+        email = self.request.session.get('email')
         password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(15))
         client = form.save(commit=False)
         client.account = User.objects.create_user(email=email, password=password)
-        messages.success(self.request, "Successfully Created")
         client.save()
+        self.request.session['email'] = ''
+        self.request.session['type'] = ''
+        messages.success(self.request, "Successfully Created")
         return super(ClientCreateView, self).form_valid(form)
 
 class ClientUpdateView(LoginRequiredMixin, UpdateView):

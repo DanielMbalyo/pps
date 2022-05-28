@@ -38,14 +38,8 @@ class CartUpdateView(LoginRequiredMixin, View):
             item_id = self.kwargs.get('slug')
             if item_id:
                 item = UserProduct.objects.filter(slug=item_id).first()
-                qty = self.request.GET.get("qty", 1)
-                cart_item = CartItem.objects.create(
-                    cart=cart_obj, product=item
-                )
+                CartItem.objects.create(cart=cart_obj, product=item)
                 messages.success(self.request, "Successful Added To Cart")
-                item_added = True
-                cart_item.quantity = qty
-                cart_item.save()
                 return redirect(item.shop.get_front_url())
             else:
                 messages.success(self.request, "Failed To Add To Cart")

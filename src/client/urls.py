@@ -9,6 +9,7 @@ urlpatterns = [
     #     name='autocomplete',
     # ),
     path('create/', views.ClientCreateView.as_view(), name="create"),
+    path('policy/', views.ClientPolicyView.as_view(), name="policy"),
     path('', views.ClientListView.as_view(), name="list"),
     path('<slug>/', views.ClientView.as_view(), name="detail"),
     path('<slug>/update', views.ClientUpdateView.as_view(), name="update"),

@@ -1,9 +1,10 @@
 import string, random
 from django.contrib import messages
+from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import reverse, get_object_or_404
 from django.views.generic import (
-    CreateView, UpdateView, DetailView, ListView
+    CreateView, UpdateView, DetailView, ListView, TemplateView
 )
 from itertools import chain
 from .models import Shop
@@ -12,6 +13,11 @@ from django.db.models import Sum
 from django.http import JsonResponse
 
 from src.product.models import UserProduct
+
+User = get_user_model()
+
+class ShopPolicyView(TemplateView):
+    template_name = 'shop/policy.html'
 
 class ShopListView(LoginRequiredMixin, ListView):
     model = Shop
@@ -96,7 +102,7 @@ class ShopView(LoginRequiredMixin, ListView):
 
 class ShopCreateView(CreateView):
     form_class = ShopForm
-    template_name = 'shop/shop_form.html'
+    template_name = 'shop/form.html'
 
     def get_success_url(self):
         return reverse('shop:list')
@@ -107,10 +113,14 @@ class ShopCreateView(CreateView):
         return context
 
     def form_valid(self, form):
+        email = self.request.session.get('email')
+        password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(15))
         shop = form.save(commit=False)
-        shop.account = self.request.user.get_acc()
-        messages.success(self.request, "Successfully Created")
+        shop.account = User.objects.create(email=email, password=password, vendor=True)
         shop.save()
+        self.request.session['email'] = ''
+        self.request.session['type'] = ''
+        messages.success(self.request, "Successfully Created")
         return super(ShopCreateView, self).form_valid(form)
 
 class ShopUpdateView(LoginRequiredMixin, UpdateView):

@@ -32,6 +32,9 @@ class Product(models.Model):
 
     objects = ProductManager()
 
+    class Meta:
+        ordering = ["-timestamp"]
+
     def get_absolute_url(self):
         return reverse("product:detail", kwargs={"slug": self.slug})
 
@@ -62,6 +65,9 @@ class UserProduct(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     objects = UserProductManager()
+
+    class Meta:
+        ordering = ["-timestamp"]
 
     def get_absolute_url(self):
         return reverse("product:detail", kwargs={"slug": self.slug})

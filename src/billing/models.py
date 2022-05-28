@@ -71,7 +71,7 @@ pre_save.connect(billing_created_receiver, sender=BillingProfile)
 
 def client_created_receiver(sender, instance, created, *args, **kwargs):
     if created:
-        BillingProfile.objects.get_or_create(user=instance, email=instance.email)
+        BillingProfile.objects.get_or_create(user=instance, email=instance.account.email)
 post_save.connect(client_created_receiver, sender=Client)
 
 class CardManager(models.Manager):

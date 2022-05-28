@@ -9,7 +9,6 @@
   background-size: cover;
   background-repeat: no-repeat;
 }
-
 @media only screen and (max-width: 768px) {
 .display-2{
   font-size: 50px;
@@ -41,41 +40,12 @@
       <div class="container">
         <div class="row">
           <div class="col-12 p-5">
-            <h4 class="mx-4">Register</h4>
-            <p class="lead mx-4 mb-5">Signing up is easy. It only takes a few steps</p>
-            {% include 'commons/messages.html' %}
-            {% for non_field_error in form.non_field.errors %}
-            <div class="alert alert-danger" role="alert">{{ error }}</div>
-            {% endfor %}
-            {% if form.is_multipart %}
-            <form enctype="multipart/form-data" method="post">
-              {% else %}
-              <form method="post">
-                {% endif %}
-                {% csrf_token %}
-                {% for field in form %}
-                <div class="form-group">
-                    {{field}}
-                  {% for error in field.errors %}
-                  <small class="form-text text-muted-danger">{{ error }}</small>
-                  {% endfor %}
-                </div>
-                {% endfor%}
-              <div class="mb-4">
-                <div class="form-check">
-                  <label class="form-check-label text-white">
-                    <input type="checkbox" class="form-check-input">
-                    I agree to all Terms & Conditions
-                  </label>
-                </div>
-              </div>
-              <div class="mt-3">
-                <button class="btn btn-block btn-primary btn-lg font-weight-medium" type="submit">SIGN UP</button>
-              </div>
-              <div class="text-center mt-4 font-weight-light">
-                Already have an account? <a href="{% url 'account:login' %}" class="text-primary">Login</a>
-              </div>
-            </form>
+            <h2 class="display-4">Purchase Even When You Are short of cash.</h2>
+          <p class="lead">Now Simple, Fast And Agile.</p>
+          <div class="text-center text-lg-left">
+            <a class="btn btn-outline-light btn-lg px-5 px-4 my-2" href="{% url 'account:login' %}" role="button">Get Started</a>
+            <!-- <a class="btn btn-outline-light btn-lg px-5 px-4 my-2" href="" role="button">Shop</a> -->
+          </div>
           </div>
         </div>
       </div>
