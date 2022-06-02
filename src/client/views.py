@@ -67,7 +67,7 @@ class ClientCreateView(CreateView):
     template_name = 'client/form.html'
 
     def get_success_url(self):
-        return reverse('client:list')
+        return reverse('account:login')
 
     def form_valid(self, form):
         email = self.request.session.get('email')

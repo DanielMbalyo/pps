@@ -105,7 +105,7 @@ class ShopCreateView(CreateView):
     template_name = 'shop/form.html'
 
     def get_success_url(self):
-        return reverse('shop:list')
+        return reverse('account:login')
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)

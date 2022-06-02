@@ -169,10 +169,13 @@ class LoginView(FormView):
             if user is None:
                 messages.success(self.request, "Invalid credentials")
                 return redirect('account:login')
-            login(self.request, user)
-            if remember_me:
-                self.request.session.set_expiry(1209600)
-        return redirect(user.get_absolute_url())
+            else: 
+                login(self.request, user)
+                if remember_me:
+                    self.request.session.set_expiry(1209600)
+                return redirect(user.get_absolute_url())
+        messages.success(self.request, "Invalid user")
+        return redirect('account:login')
 
     def form_invalid(self, form):
         context = {'form': form,}
