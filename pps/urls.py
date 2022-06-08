@@ -14,7 +14,6 @@ urlpatterns = [
     path('manager/', include('src.manager.urls')),
     path('order/', include('src.order.urls')),
     path('product/', include('src.product.urls')),
-    path('service/', include('src.service.urls')),
     path('shop/', include('src.shop.urls')),
     path('support/', include('src.support.urls')),
 ]

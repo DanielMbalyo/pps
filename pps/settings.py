@@ -29,7 +29,6 @@ INSTALLED_APPS = [
     'src.manager',
     'src.order',
     'src.product',
-    'src.service',
     'src.shop',
     'src.support',
 
@@ -40,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'rest_framework.authtoken',
     'corsheaders'
 ]
 

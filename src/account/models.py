@@ -52,7 +52,7 @@ class User(AbstractBaseUser):
     is_active = models.BooleanField(default=False)
     staff = models.BooleanField(default=False)
     admin = models.BooleanField(default=False)
-    vendor = models.BooleanField(default=False)
+    business = models.BooleanField(default=False)
 
     objects = UserManager()
 
@@ -61,7 +61,7 @@ class User(AbstractBaseUser):
     def get_name(self):
         if self.staff:
             return self.manager_set.all().first().name
-        elif self.vendor:
+        elif self.business:
             return self.shop_set.all().first().name
         else:
             return self.client_set.all().first().name

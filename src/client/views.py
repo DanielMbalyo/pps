@@ -8,7 +8,7 @@ from django.views.generic import (
 )
 from itertools import chain
 from .models import Client
-from .forms import ClientForm
+from .forms import ClientForm, FinanceForm
 from django.db.models import Sum
 
 from src.shop.models import Shop
@@ -67,18 +67,58 @@ class ClientCreateView(CreateView):
     template_name = 'client/form.html'
 
     def get_success_url(self):
-        return reverse('account:login')
+        return reverse('client:finance')
 
     def form_valid(self, form):
         email = self.request.session.get('email')
-        password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(15))
-        client = form.save(commit=False)
-        client.account = User.objects.create_user(email=email, password=password)
-        client.save()
-        self.request.session['email'] = ''
-        self.request.session['type'] = ''
-        messages.success(self.request, "Successfully Created")
+        if email:
+            password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(15))
+            client = form.save(commit=False)
+            client.account = User.objects.create_user(email=email, password=password)
+            client.save()
+            self.request.session['email'] = None
+            self.request.session['type'] = None
+            self.request.session['client'] = client.id
+            print(client.id)
+            messages.success(self.request, "Successfully Created")
+        else:
+            messages.success(self.request, "Invalid Mail")
         return super(ClientCreateView, self).form_valid(form)
+
+class ClientFinanceView(CreateView):
+    form_class = FinanceForm
+    template_name = 'client/form.html'
+
+    def get_success_url(self):
+        return reverse('client:summary')
+
+    def form_valid(self, form):
+        id = self.request.session.get('client')
+        client = form.save(commit=False)
+        client.client = Client.objects.filter(id=id).first()
+        client.save()
+        self.request.session['client'] = None
+        messages.success(self.request, "Successfully Created")
+        return super(ClientFinanceView, self).form_valid(form)
+
+class ClientSummaryView(TemplateView):
+    template_name = 'client/summary.html'
+
+class ClientCompleteView(TemplateView):
+    template_name = 'client/summary.html'
+
+    def get(self, request):
+        id = self.request.session.get('client', None)
+        print(id)
+        if not id:
+            return redirect("account:login")
+        client = Client.objects.filter(id=id).first()
+        finance = Finance.objects.filter(client=client)
+        context = {
+            "client": client,
+            "finance": finance,
+        }
+        return render(self.request, "client/summary.html", context)
 
 class ClientUpdateView(LoginRequiredMixin, UpdateView):
     model = Client

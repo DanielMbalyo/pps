@@ -1,0 +1,59 @@
+{% extends "front.html" %}
+{% block title %}Details{% endblock %}
+{% block content %}
+{% load static %}
+<div class="container-fluid bg-light">
+  <div class="row h-25">
+    <div class="text-left col-12 my-auto">
+      <div class="container">
+        <div class="row">
+          <div class="col-12 p-5">
+            <h1 class="display-4 primary">Application Summary</h1>
+            <p class="lead">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do 
+              eiusmod ut labore et dolore magna aliqua.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<section class="container-fluid h-75">
+  <div class="row h-100">
+    <div class="text-left col-12 my-auto">
+      <div class="container">
+        <div class="row">
+          <div class="col-12 p-5">
+            <div class="container">
+            {% include 'commons/messages.html' %}
+            <ul class="list-group list-group-flush">
+            <li class="list-group-item"><h1>Personal Details</h1></li>
+            <li class="list-group-item">Name : {{client}}</li>
+            <li class="list-group-item">Gender : {{client.gender}}</li>
+            <li class="list-group-item">Age : {{client.dob|timesince}}</li>
+            <li class="list-group-item">Citizenship : {{client.citizenship}}</li>
+            <li class="list-group-item">Location : {{client.location}}</li>
+            <li class="list-group-item">Martial Status : {{client.martial}}</li>
+            <li class="list-group-item">Identification : {{client.Identification}}</li>
+            <li class="list-group-item">ID Number : {{client.id_number}}</li>
+            <li class="list-group-item">Phone : {{client.phone}}</li>
+            </ul>
+            <ul class="list-group list-group-flush">
+            <li class="list-group-item"><h1>Financial Details</h1></li>
+            <li class="list-group-item">Source Of Income : {{finance.source}}</li>
+            <li class="list-group-item">Employer/Business Name : {{finance.employer}}</li>
+            <li class="list-group-item">Employer/Business Location : {{finance.branch}}</li>
+            <li class="list-group-item">Employer/Business Referee : {{finance.referee}}</li>
+            <li class="list-group-item">Employment/Business Duration : {{finance.duration}}</li>
+            <li class="list-group-item">Monthly Income : {{finance.range}}</li>
+            <li class="list-group-item">Number Of Dependants : {{finance.dependants}}</li>
+            </ul>
+            <a href="{% url 'account:login' %}" class="btn btn-md btn-light btn-block">Finalize</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+{% endblock %}
