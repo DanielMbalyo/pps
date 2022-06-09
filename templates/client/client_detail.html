@@ -2,14 +2,18 @@
 {% block title %}Dashboard{% endblock %}
 {% block content %}
 {% load static %}
+{% if user.staff %}
+{% include 'commons/sidebar.html' %}
+{% else %}
 {% include 'commons/sidebar_clnt.html' %}
+{% endif %}
 <div class="main-panel">
   <div class="content-wrapper">
     <div class="row">
       <div class="col-md-12 grid-margin">
         <div class="row">
           <div class="col-12 col-xl-8 mb-4 mb-xl-0">
-            <h3 class="font-weight-bold">Welcome, {{user.get_name}}</h3>
+            <h3 class="font-weight-bold">Welcome, {{client}}</h3>
             <h6 class="font-weight-normal mb-0">All systems are running smoothly! </h6>
           </div>
           <div class="col-12 col-xl-4">
@@ -24,112 +28,151 @@
     </div>
     {% include 'commons/messages.html' %}
     <div class="row">
-         <div class="col-md-4 mb-4 stretch-card transparent">
-            <div class="card card-tale">
-              <div class="card-body">
-                <p class="mb-4">Balance</p>
-                <p class="fs-30 mb-4">0</p>
-                <p> </p>
-              </div>
-            </div>
-          </div>
-          <!-- <div class="col-md-3 mb-4 stretch-card transparent">
-            <div class="card card-dark-blue">
-              <div class="card-body">
-                <p class="mb-4">No. Of Shops</p>
-                <p class="fs-30 mb-4">{% if shops %}{{shops}}{% else %} 0 {% endif %}</p>
-                <p> </p>
-              </div>
-            </div>
-          </div> -->
-          <div class="col-md-4 mb-4 stretch-card transparent">
-            <div class="card card-light-blue">
-              <div class="card-body">
-                <p class="mb-4">No. Of Orders</p>
-                <p class="fs-30 mb-4">{% if investment %}{{investment}}{% else %} 0 {% endif %}</p>
-                <p> </p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4 mb-4 stretch-card transparent">
-            <div class="card card-light-danger">
-              <div class="card-body">
-                <p class="mb-4">No. Of Transactions</p>
-                <p class="fs-30 mb-4">{% if withdraw %}{{withdraw}}{% else %} 0 {% endif %}</p>
-                <p> </p>
-              </div>
-            </div>
-          </div>
-        </div>
-    <!-- <div class="row">
-      <div class="col-md-3 grid-margin grid-margin-md-0 stretch-card">
-        <div class="card">
+      <div class="col-md-4 mb-4 stretch-card transparent">
+        <div class="card card-tale">
           <div class="card-body">
-            <h4 class="card-title">Tigo</h4>
-            <p class="card-description">Njia Ya Malipo</p>
-            <ul class="list-star">
-              <li>*150*01#</li>
-              <li>Chagua Lipa Kwa Simu</li>
-              <li>Chagua Kwenda Tigo Pesa</li>
-              <li>Namba 7611318 jina GOLD INVESTMENTS</li>
-              <li>Ingiza kiasi Tsh 12,000 For activation na kuendela</li>
-              <li>Password ya mtumiaji</li>
-            </ul>
+            <p class="mb-4">Balance</p>
+            <p class="fs-30 mb-4">0</p>
+            <p> </p>
           </div>
         </div>
       </div>
-      <div class="col-md-3 grid-margin grid-margin-md-0 stretch-card">
-        <div class="card">
+      <!-- <div class="col-md-3 mb-4 stretch-card transparent">
+        <div class="card card-dark-blue">
           <div class="card-body">
-            <h4 class="card-title">Vodacom</h4>
-            <p class="card-description">Njia Ya Malipo</p>
-            <ul class="list-star">
-              <li>*150*00#</li>
-              <li>Chagua Tuma Pesa</li>
-              <li>Chagua Mitandao Mingine</li>
-              <li>Chagua Tigo Pesa</li>
-              <li>Namba 7611318 jina GOLD INVESTMENTS</li>
-              <li>Ingiza kiasi Tsh 12,000 For activation na kuendela</li>
-              <li>Password ya mtumiaji</li>
-            </ul>
+            <p class="mb-4">No. Of Shops</p>
+            <p class="fs-30 mb-4">{% if shops %}{{shops}}{% else %} 0 {% endif %}</p>
+            <p> </p>
+          </div>
+        </div>
+      </div> -->
+      <div class="col-md-4 mb-4 stretch-card transparent">
+        <div class="card card-light-blue">
+          <div class="card-body">
+            <p class="mb-4">No. Of Orders</p>
+            <p class="fs-30 mb-4">{% if investment %}{{investment}}{% else %} 0 {% endif %}</p>
+            <p> </p>
           </div>
         </div>
       </div>
-      <div class="col-md-3 grid-margin grid-margin-md-0 stretch-card">
-        <div class="card">
+      <div class="col-md-4 mb-4 stretch-card transparent">
+        <div class="card card-light-danger">
           <div class="card-body">
-            <h4 class="card-title">Airtel</h4>
-            <p class="card-description">Njia Ya Malipo</p>
-            <ul class="list-star">
-              <li>*150*60#</li>
-              <li>Chagua Tuma</li>
-              <li>Chagua Mitandao Mingine</li>
-              <li>Chagua Tigo Pesa</li>
-              <li>Chagua Lipa Kwa Tigo Pesa</li>
-              <li>Namba 7611318 jina GOLD INVESTMENTS</li>
-              <li>Ingiza kiasi Tsh 12,000 For activation na kuendela</li>
-              <li>Password ya mtumiaji</li>
-            </ul>
+            <p class="mb-4">No. Of Transactions</p>
+            <p class="fs-30 mb-4">{% if withdraw %}{{withdraw}}{% else %} 0 {% endif %}</p>
+            <p> </p>
           </div>
         </div>
       </div>
-      <div class="col-md-3 grid-margin grid-margin-md-0 stretch-card">
+    </div>
+    <div class="row">
+      <div class="col-lg-6 grid-margin stretch-card">
         <div class="card">
           <div class="card-body">
-            <h4 class="card-title">Halotel</h4>
-            <p class="card-description">Njia Ya Malipo</p>
-            <ul class="list-star">
-              <li>*150*88#</li>
-              <li>Chagua Lipia Bidhaa</li>
-              <li>Chagua Lipa Kwa Tigo Pesa</li>
-              <li>Namba 7611318 jina GOLD INVESTMENTS</li>
-              <li>Ingiza kiasi Tsh 12,000 For activation na kuendela</li>
-              <li>Password ya mtumiaji</li>
-            </ul>
+            <h4 class="card-title">Personal Details</h4>
+            <div class="table-responsive">
+              <table class="table">
+                <tbody>
+                  <tr>
+                    <td>Name</td>
+                    <td>{{client}}</td>
+                  </tr>
+                  <tr>
+                    <td>Gender</td>
+                    <td>{{client.gender}}</td>
+                  </tr>
+                  <tr>
+                    <td>Age</td>
+                    <td>{{client.dob|timesince}}</td>
+                  </tr>
+                  <tr>
+                    <td>Citizenship</td>
+                    <td>{{client.citizenship}}</td>
+                  </tr>
+                  <tr>
+                    <td>Location</td>
+                    <td>{{client.location}}</td>
+                  </tr>
+                  <tr>
+                    <td>Martial Status</td>
+                    <td>{{client.martial}}</td>
+                  </tr>
+                  <tr>
+                    <td>Identification</td>
+                    <td>{{client.identification}}</td>
+                  </tr>
+                  <tr>
+                    <td>ID Number</td>
+                    <td>{{client.id_number}}</td>
+                  </tr>
+                  <tr>
+                    <td>Phone</td>
+                    <td>{{client.phone}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
-    </div>     -->
+      <div class="col-lg-6 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Other Information</h4>
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <tbody>
+                  <tr>
+                    <td>Source Of Income</td>
+                    <td>{{finance.source}}</td>
+                  </tr>
+                  <tr>
+                    <td>Employer/Business Name</td>
+                    <td>{{finance.employer}}</td>
+                  </tr>
+                  <tr>
+                    <td>Employer/Business Location</td>
+                    <td>{{finance.branch}}</td>
+                  </tr>
+                  <tr>
+                    <td>Employer/Business Referee</td>
+                    <td>{{finance.referee}}</td>
+                  </tr>
+                  <tr>
+                    <td>Employment/Business Duration</td>
+                    <td>{{finance.duration}}</td>
+                  </tr>
+                  <tr>
+                    <td>Monthly Income</td>
+                    <td>{{finance.range}}</td>
+                  </tr>
+                  <tr>
+                    <td>Number Of Dependants</td>
+                    <td>{{finance.dependants}}</td>
+                  </tr>
+                  <tr>
+                    <td>Active</td>
+                    <td>{{client.account.is_active}}</td>
+                  </tr>
+                  {% if user.staff %}
+                  <tr>
+                    <td>Actions</td>
+                    <td>
+                      {% if not obj.account.is_active %}
+                        <a href="{% url 'account:admin_activate' client.account.uid %}" class="btn btn-sm btn-outline-secondary">Activate</a>
+                      {% else %}
+                        <a href="{% url 'account:admin_deactivate' client.account.uid %}" class="btn btn-sm btn-outline-secondary">Deactivate</a>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  {% endif %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   <!-- content-wrapper ends -->
 </div>
 

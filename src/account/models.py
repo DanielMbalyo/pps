@@ -69,7 +69,7 @@ class User(AbstractBaseUser):
     def get_acc(self):
         if self.staff:
             return self.manager_set.all().first()
-        elif self.vendor:
+        elif self.business:
             return self.shop_set.all().first()
         else:
             return self.client_set.all().first()
@@ -80,7 +80,7 @@ class User(AbstractBaseUser):
     def get_absolute_url(self):
         if self.staff:
             return self.manager_set.all().first().get_absolute_url()
-        elif self.vendor:
+        elif self.business:
             return self.shop_set.all().first().get_absolute_url()
         else:
             return self.client_set.all().first().get_absolute_url()

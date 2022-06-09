@@ -125,9 +125,107 @@
           </div>
         </div>
       </div>
-    </div>    
-  <!-- content-wrapper ends -->
-</div>
+    </div>
+    <div class="row">
+      <div class="col-lg-6 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Personal Details</h4>
+            <div class="table-responsive">
+              <table class="table">
+                <tbody>
+                  <tr>
+                    <td>Name</td>
+                    <td>{{vendor}}</td>
+                  </tr>
+                  <tr>
+                    <td>Gender</td>
+                    <td>{{vendor.gender}}</td>
+                  </tr>
+                  <tr>
+                    <td>Age</td>
+                    <td>{{vendor.dob|timesince}}</td>
+                  </tr>
+                  <tr>
+                    <td>Citizenship</td>
+                    <td>{{vendor.citizenship}}</td>
+                  </tr>
+                  <tr>
+                    <td>Location</td>
+                    <td>{{vendor.location}}</td>
+                  </tr>
+                  <tr>
+                    <td>Phone</td>
+                    <td>{{vendor.phone}}</td>
+                  </tr>
+                  <tr>
+                    <td>Business Contact</td>
+                    <td>{{shop.contacts}}</td>
+                  </tr>
+                  <tr>
+                    <td>Active</td>
+                    <td>{{vendor.account.is_active}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Shop Details</h4>
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <tbody>
+                  <tr>
+                    <td>Business Name</td>
+                    <td>{{shop.name}}</td>
+                  </tr>
+                  <tr>
+                    <td>Business Category</td>
+                    <td>{{shop.category}}</td>
+                  </tr>
+                  <tr>
+                    <td>Business Number</td>
+                    <td>{{shop.tin_number}}</td>
+                  </tr>
+                  <tr>
+                    <td>Business Region</td>
+                    <td>{{shop.region}}</td>
+                  </tr>
+                  <tr>
+                    <td>Business District</td>
+                    <td>{{shop.district}}</td>
+                  </tr>
+                  <tr>
+                    <td>Opening Time</td>
+                    <td>{{shop.opening}}</td>
+                  </tr>
+                  <tr>
+                    <td>Closing Time</td>
+                    <td>{{shop.closing}}</td>
+                  </tr>
+                  {% if user.staff %}
+                  <tr>
+                    <td>Actions</td>
+                    <td>
+                      {% if not obj.account.is_active %}
+                        <a href="{% url 'account:admin_activate' vendor.account.uid %}" class="btn btn-sm btn-outline-secondary">Activate</a>
+                      {% else %}
+                        <a href="{% url 'account:admin_deactivate' vendor.account.uid %}" class="btn btn-sm btn-outline-secondary">Deactivate</a>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  {% endif %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+  
   <!-- content-wrapper ends -->
 </div>
 

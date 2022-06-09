@@ -9,7 +9,7 @@ urlpatterns = [
     #     name='autocomplete',
     # ),
     path('create/', views.ClientCreateView.as_view(), name="create"),
-    path('finace/', views.ClientFinanceView.as_view(), name="finance"),
+    path('finance/', views.ClientFinanceView.as_view(), name="finance"),
     path('summary/', views.ClientSummaryView.as_view(), name="summary"),
     path('complete/', views.ClientCompleteView.as_view(), name="complete"),
     path('policy/', views.ClientPolicyView.as_view(), name="policy"),

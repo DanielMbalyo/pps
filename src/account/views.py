@@ -51,7 +51,7 @@ class AdminActivateView(TemplateView):
                     messages.success(request, "Account Is Now Activated.")
                     if qs.first().staff:
                         return redirect('manager:list')
-                    elif qs.first().vendor:
+                    elif qs.first().business:
                         return redirect('shop:list')
                     else:
                         return redirect('client:list')

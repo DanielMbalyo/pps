@@ -56,7 +56,7 @@ class Vendor(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.name + "-" + str(calendar.timegm(time.gmtime())))
+            self.slug = slugify("vendor-" + str(calendar.timegm(time.gmtime())))
         super(Vendor, self).save(*args, **kwargs)
 
 class ShopManager(models.Manager):
@@ -96,5 +96,5 @@ class Shop(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.name + "-" + str(calendar.timegm(time.gmtime())))
+            self.slug = slugify("shop-" + str(calendar.timegm(time.gmtime())))
         super(Shop, self).save(*args, **kwargs)

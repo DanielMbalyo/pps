@@ -7,7 +7,7 @@ from django.views.generic import (
     CreateView, UpdateView, DetailView, ListView, TemplateView
 )
 from itertools import chain
-from .models import Client
+from .models import Client, Finance
 from .forms import ClientForm, FinanceForm
 from django.db.models import Sum
 
@@ -48,7 +48,6 @@ class ClientView(LoginRequiredMixin, ListView):
     model = Client
     template_name = 'client/client_detail.html'
     context_object_name = 'object'
-    # paginate_by = 20
     slug = None
 
     def get_object(self):
@@ -57,6 +56,10 @@ class ClientView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
+        client = Client.objects.filter(slug=self.kwargs.get('slug')).first()
+        finance = Finance.objects.filter(client=client).first()
+        context['client'] = client
+        context['finance'] = finance
         # context['investment'] = Investment.objects.filter(client=self.get_object()).aggregate(Sum('amount'))['amount__sum']
         # context['balance'] = payment.balance
         # context['withdraw'] = Withdraw.objects.filter(client=self.get_object()).aggregate(Sum('amount'))['amount__sum']
@@ -79,7 +82,6 @@ class ClientCreateView(CreateView):
             self.request.session['email'] = None
             self.request.session['type'] = None
             self.request.session['client'] = client.id
-            print(client.id)
             messages.success(self.request, "Successfully Created")
         else:
             messages.success(self.request, "Invalid Mail")
@@ -97,28 +99,25 @@ class ClientFinanceView(CreateView):
         client = form.save(commit=False)
         client.client = Client.objects.filter(id=id).first()
         client.save()
-        self.request.session['client'] = None
         messages.success(self.request, "Successfully Created")
         return super(ClientFinanceView, self).form_valid(form)
 
-class ClientSummaryView(TemplateView):
+class ClientSummaryView(ListView):
     template_name = 'client/summary.html'
+    model = Client
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        id = self.request.session.get('client', None)
+        client = Client.objects.filter(id=id).first()
+        finance = Finance.objects.filter(client=client).first()
+        self.request.session['client'] = None
+        context['client'] = client
+        context['finance'] = finance
+        return context
 
 class ClientCompleteView(TemplateView):
     template_name = 'client/summary.html'
-
-    def get(self, request):
-        id = self.request.session.get('client', None)
-        print(id)
-        if not id:
-            return redirect("account:login")
-        client = Client.objects.filter(id=id).first()
-        finance = Finance.objects.filter(client=client)
-        context = {
-            "client": client,
-            "finance": finance,
-        }
-        return render(self.request, "client/summary.html", context)
 
 class ClientUpdateView(LoginRequiredMixin, UpdateView):
     model = Client

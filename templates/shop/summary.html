@@ -1,0 +1,57 @@
+{% extends "front.html" %}
+{% block title %}Details{% endblock %}
+{% block content %}
+{% load static %}
+<div class="container-fluid bg-light">
+  <div class="row h-25">
+    <div class="text-left col-12 my-auto">
+      <div class="container">
+        <div class="row">
+          <div class="col-12 p-5">
+            <h1 class="display-4 primary">Application Summary</h1>
+            <p class="lead">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do 
+              eiusmod ut labore et dolore magna aliqua.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<section class="container-fluid h-75">
+  <div class="row h-100">
+    <div class="text-left col-12 my-auto">
+      <div class="container">
+        <div class="row">
+          <div class="col-12 p-5">
+            <div class="container">
+            {% include 'commons/messages.html' %}
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item"><h1>Vendor Details</h1></li>
+              <li class="list-group-item">Name : {{vendor}}</li>
+              <li class="list-group-item">Gender : {{vendor.gender}}</li>
+              <li class="list-group-item">Age : {{vendor.dob|timesince}}</li>
+              <li class="list-group-item">Citizenship : {{vendor.citizenship}}</li>
+              <li class="list-group-item">Location : {{vendor.location}}</li>
+              <li class="list-group-item">Phone : {{vendor.phone}}</li>
+            </ul>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item"><h1>Shop Details</h1></li>
+              <li class="list-group-item">Business Name : {{shop.name}}</li>
+              <li class="list-group-item">Business Category : {{shop.category}}</li>
+              <li class="list-group-item">Business Number : {{shop.tin_number}}</li>
+              <li class="list-group-item">Business Contact : {{shop.contacts}}</li>
+              <li class="list-group-item">Business Region : {{shop.region}}</li>
+              <li class="list-group-item">Business District : {{shop.district}}</li>
+              <li class="list-group-item">Opening Time : {{shop.opening}}</li>
+              <li class="list-group-item">Closing Time : {{shop.closing}}</li>
+            </ul>
+            <a href="{% url 'account:login' %}" class="btn btn-md btn-light btn-block">Finalize</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+{% endblock %}
