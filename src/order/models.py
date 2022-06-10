@@ -87,9 +87,6 @@ class OrderManagerQuerySet(models.query.QuerySet):
         return self.exclude(status='created')
 
 class OrderManager(models.Manager):
-    def get_queryset(self):
-        return OrderManagerQuerySet(self.model, using=self._db)
-
     def search(self, query):
         lookups = (
             models.Q(order_id__icontains=query) 
