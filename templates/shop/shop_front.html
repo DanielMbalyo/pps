@@ -1,50 +1,40 @@
 {% extends "front.html" %}
 {% block content %}
 {% load static %}
-<div class="container-fluid bg-light">
-  <div class="row h-25">
-    <div class="text-left col-12 my-auto">
-      <div class="container">
-        <div class="row">
-          <div class="col-12 px-5 pb-5">
-            <form method='GET' class='row mt-3' action=".">
-              <div class="input-group form-group-no-border mx-auto" style="margin-bottom: 0px; font-size: 32px;">
-                <div class="form-group mb-2 col-12">
-                  <input name="q" class="form-control form-control-lg mx-auto" type="text" placeholder="Search for Products....">
+<div class="container-fluid" style='width: 100%; height: 100vh;'>
+  <div class="row">
+      <div class="col-9" style='width: 100%; height: 100vh;'>
+        <div class="container">
+          <div class="row">
+            <div class="col-12 px-5 pb-3">
+              <form method='GET' class='row mt-5' action=".">
+                <div class="input-group form-group-no-border mx-auto" style="margin-bottom: 0px; font-size: 32px;">
+                  <div class="form-group mb-2 col-12">
+                    <input name="q" class="form-control form-control mx-auto" type="text" placeholder="{% if query %} {{ query}} {% else %} Search for Products {% endif %}">
+                  </div>
                 </div>
-              </div>
-            </form>
+              </form>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="container">
-  <div class="row">
-    <main role="main" class="col-md-12 ml-sm-auto px-md-4">
       {% include 'commons/messages.html' %}
-      {% if products %}
-      <div class="no-gutters row px-1 pt-3">
-        {% for obj in products %}
+      {% if object %}
+      <div class="container no-gutters row px-5 pt-3">
+        {% for obj in object %}
         <div class="col-md-3 col-6 px-1">
           {% if obj.product.image %}
           <img class="card-img-top" src="{{ obj.product.image.url }}" alt="{{ obj.title}} logo" style="height: 10rem;">
           {% endif %}
-          <div class="card-body py-0 p-1">
-            <h5 class="card-title mb-0"><a href="">{{ obj.product.title }}</a>  
-          </h5>  
-            <div class="row">
-              <div class="col">
-             <p class="card-text m-0 px-1 pt-2">{{ obj.sale_price }}</p>
-           </div>
-           <div class="col pt-2"><div class="btn-group py-auto">
-             <!-- <button type="button" class="btn btn-sm btn-outline-primary">
-               <a href="">View</a></button> -->
-               <button type="button" class="btn btn-sm btn-outline-primary">
-                 <a href="{% url 'cart:update' obj.slug %}">To Cart</a></button>
-             </div>
-           </div>
+          <div class="card-body py-0 p-1 row">
+            <div class="col-8">
+              <p class="card-text m-0 px-1"><small class="m-0">{{ obj.product.title }}</small></p>
+              <p class="card-text m-0 px-1"><small class="">{{ obj.sale_price }}</small></p>
+            </div>
+            <div class="col-4 pt-2">
+              <div class="btn-group py-auto">
+                <a class="btn btn-sm btn-outline-primary" 
+                  href="{% url 'cart:update' cart.id obj.slug %}">Add</a>
+              </div>
             </div>
           </div>
         </div>
@@ -55,8 +45,70 @@
         Products have not been uploaded yet.<br>
       </p>
       {% endif %}
-    </main>
+      </div>
+      <div class="col-3 pt-5" style="position: fixed; top: 50px; right:20px">
+          {% if items %}
+          <div class="no-gutters row px-1">
+              {% for obj in items %}<a href=""></a>
+              <div class="col-12 px-1 pb-2">
+                  <div class="card-body py-0 p-1">
+                      <!-- <h5 class="card-title mb-0">{{ obj.name }}</h5> -->
+                      <div class="row"> 
+                          <div class="col-9">
+                              <p class="card-text m-0 px-1"><small class="m-0">{{ obj.product }}</small></p>
+                              <p class="card-text m-0 px-1"><small class="">{{ obj.product.sale_price }}</small></p>
+                          </div>
+                          <div class="col-3 pt-2">
+                              <div class="btn-group py-auto">
+                                <a class="btn btn-sm btn-outline-primary" 
+                                href="{% url 'cart:remove' cart.id obj.product.slug %}">Remove</a>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              {% endfor %}
+          </div><br>
+          {% else %}
+          <p class='my-5 py-5 lead text-center'>
+              No Items in Cart.<br>
+          </p>
+          {% endif %}
+          <table class="table">
+            <tbody>
+            <tr>
+              <td><b>Items</b></td>
+              <td><span class='cart-subtotal'>{{ items.count }}</span></td>
+            </tr>
+            <tr>
+              <td><b>Tax</b></td>
+              <td><span class='cart-subtotal'>{{ cart.tax_total }}</span></td>
+            </tr><tr>
+              <td><b>Subtotal</b></td>
+              <td><span class='cart-subtotal'>{{ cart.subtotal }}</span></td>
+            </tr>
+            <tr>
+              <td><b>Total</b></td>
+              <td><span class='cart-total'>{{ cart.total }}</span></td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <a href="{% url 'cart:clear' cart.id %}" class="btn btn-md btn-outline-danger btn-block">Clear</a>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <a href="{% url 'cart:checkout' cart.id %}" class="btn btn-md btn-outline-success btn-block">Checkout</a>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+      </div>
   </div>
 </div>
+
+<script>
+ 
+</script>
 {% endblock %}
 {% block footer %}{% endblock %}

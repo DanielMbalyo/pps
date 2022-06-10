@@ -5,7 +5,7 @@ from django.shortcuts import reverse
 from django.utils.text import slugify
 from django.db.models import Q
 
-from src.shop.models import Shop
+from src.shop.models import Shop, Vendor
 
 def upload_location(instance, filename):
     random_ = random.randint(1, 3910209312)
@@ -56,7 +56,7 @@ class UserProductManager(models.Manager):
 
 class UserProduct(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    shop = models.ForeignKey(Shop, on_delete=models.CASCADE)
+    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
     slug = models.SlugField(blank=True, unique=True)
     description = models.TextField()
     sale_price = models.DecimalField(decimal_places=2, max_digits=20, default=39.99)

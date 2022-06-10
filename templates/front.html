@@ -45,16 +45,10 @@
           <li class="nav-item"> <a class="nav-link" href="#"></a> </li>
         </ul>
         <ul class="nav navbar-nav navbar-left">
-          
             {% if user.is_authenticated %}
             <li class="nav-item">
                 <a class="nav-link active" href="{{user.get_absolute_url}}">{{user.get_name}}
                 <span style="font-size: 20px;"><i class="ml-2 fas fa-user-alt"></i></span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link active" href="{% url 'cart:list' %}">
-                    <span style="font-size: 20px;"><i class="ml-2 fas fa-shopping-cart"></i></span>
                 </a>
             </li>
             {% else %}

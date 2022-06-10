@@ -10,6 +10,7 @@ urlpatterns = [
     path('policy/', views.ShopPolicyView.as_view(), name="policy"),
     path('', views.ShopListView.as_view(), name="list"),
     path('<slug>/', views.ShopView.as_view(), name="detail"),
-    path('<slug>/cat/', views.ShopFrontView.as_view(), name="front"),
-    path('<slug>/update', views.ShopUpdateView.as_view(), name="update"),
+    path('<slug>/front/', views.ShopFrontView.as_view(), name="front"),
+    path('<slug>/product/', views.ShopProductView.as_view(), name="product"),
+    path('<slug>/update/', views.ShopUpdateView.as_view(), name="update"),
 ]

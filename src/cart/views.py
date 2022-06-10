@@ -13,124 +13,66 @@ from src.address.forms import AddressForm
 from src.address.models import Address
 
 from src.billing.models import BillingProfile
-from src.order.models import Order
+from src.order.models import Order, ProductPurchase
 from src.product.models import Product, UserProduct
 from .models import Cart, CartItem
 
-class CartView(LoginRequiredMixin, ListView):
-    model = Cart
-    template_name = 'cart/cart_list.html'
-
-    def get_context_data(self, **kwargs):
-        cart_obj, cart_created = Cart.objects.new_or_get(self.request)
-        cart_item = CartItem.objects.filter(cart=cart_obj)
-        context = super(CartView, self).get_context_data(**kwargs)
-        context.update({
-            'cart_obj': cart_obj,
-            'products' : cart_item,
-        })
-        return context
-
 class CartUpdateView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
-        cart_obj, cart_created = Cart.objects.new_or_get(self.request)
-        if cart_obj:
+        cart = Cart.objects.filter(id=self.kwargs.get('id'))
+        if cart:
             item_id = self.kwargs.get('slug')
             if item_id:
                 item = UserProduct.objects.filter(slug=item_id).first()
-                CartItem.objects.create(cart=cart_obj, product=item)
+                CartItem.objects.create(cart=cart.first(), product=item)
                 messages.success(self.request, "Successful Added To Cart")
-                return redirect(item.shop.get_front_url())
+                return redirect(item.vendor.get_front_url())
             else:
                 messages.success(self.request, "Failed To Add To Cart")
-                return redirect(item.shop.get_front_url())
-        return redirect("cart:list")
+                return redirect(item.vendor.get_front_url())
+        return redirect(cart.vendor.get_front_url())
 
-class CartDeleteView(LoginRequiredMixin, View):
+class CartRemoveView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
-        cart_obj, cart_created = Cart.objects.new_or_get(self.request)
-        if cart_obj:
-            item_id = self.request.GET.get("product_id")
+        cart = Cart.objects.filter(id=self.kwargs.get('id'))
+        if cart:
+            item_id = self.kwargs.get('slug')
             if item_id:
-                item_instance = get_object_or_404(Product, id=item_id)
-                cart_item, created = CartItem.objects.get_or_create(cart=cart_obj, item=item_instance)
+                item = UserProduct.objects.filter(slug=item_id).first()
+                cart_item = CartItem.objects.filter(cart=cart.first(), product=item).first()
                 cart_item.delete()
-                flash_message = "Quantity has been updated successfully."
-        return redirect("cart:list")
+                messages.success(self.request, "Successful Removed From Cart")
+                return redirect(item.vendor.get_front_url())
+        return redirect(cart.vendor.get_front_url())
 
 class CartClearView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
-        cart_obj, cart_created = Cart.objects.new_or_get(self.request)
-        if cart_obj:
-            count = cart_obj.products.count()
-            if count >= 1:
-                cart_item = CartItem.objects.filter(cart=cart_obj)
-                cart_item.delete()
-        return redirect("cart:list")
+        cart = Cart.objects.filter(id=self.kwargs.get('id')).first()
+        if cart:
+            cart_item = CartItem.objects.filter(cart=cart)
+            if cart_item:
+                for obj in cart_item:
+                    obj.delete()
+                messages.success(self.request, "Successful Cleared Cart")
+            else:
+                messages.success(self.request, "Failed To Clear Cart")
+        return redirect(cart.vendor.get_front_url())
 
 class CheckoutView(LoginRequiredMixin, TemplateView):
-    address_qs = None
-    has_card = False
-    order_obj = None
-    billing_profile = None
+    def get(self, *args, **kwargs):
+        cart = Cart.objects.filter(id=self.kwargs.get('id')).first()
+        if cart:
+            cart_item = CartItem.objects.filter(cart=cart)
+            if cart_item.count() == 0:
+                messages.success(self.request, "Please Add Items To Cart")
+                return redirect(cart.vendor.get_front_url())
+            order = Order.objects.create(vendor=cart.vendor, total=cart.total)
+            cart.clear()
+            for obj in cart_item:
+                ProductPurchase.objects.create(
+                    order=order, product=obj.product, quantity=obj.quantity, amount=obj.product_total
+                )
+                obj.delete()
+            messages.success(self.request, "Order Created Successfully")
+            return redirect(order.get_absolute_url())
 
-    def get(self, request):
-        cart_obj, cart_created = Cart.objects.new_or_get(request)
-        order_obj = None
-        if cart_created or cart_obj.products.count() == 0:
-            return redirect("cart:list")
-
-        login_form = LoginForm(request=request)
-        guest_form = GuestForm(request=request)
-        address_form = AddressForm()
-        billing_address_id = request.session.get("billing_address_id", None)
-        shipping_address_required = not cart_obj.is_digital
-        shipping_address_id = request.session.get("shipping_address_id", None)
-
-        self.billing_profile, billing_profile_created = BillingProfile.objects.new_or_get(request)
-        if self.billing_profile is not None:
-            if request.user.is_authenticated:
-                self.address_qs = Address.objects.filter(billing_profile=self.billing_profile)
-            content_type = ContentType.objects.get(app_label='cart', model='cart')
-            self.order_obj, order_obj_created = Order.objects.new_or_get(
-                self.billing_profile, cart_obj, content_type, cart_obj.id)
-            if shipping_address_id:
-                self.order_obj.shipping_address = Address.objects.get(id=shipping_address_id)
-                del request.session["shipping_address_id"]
-            if billing_address_id:
-                self.order_obj.billing_address = Address.objects.get(id=billing_address_id) 
-                del request.session["billing_address_id"]
-            if billing_address_id or shipping_address_id:
-                self.order_obj.save()
-            has_card = self.billing_profile.has_card
-
-        context = {
-            "object": self.order_obj,
-            "billing_profile": self.billing_profile,
-            "login_form": login_form,
-            "guest_form": guest_form,
-            "address_form": address_form,
-            "address_qs": self.address_qs,
-            "has_card": has_card,
-            "publish_key": STRIPE_PUB_KEY,
-            "shipping_address_required": shipping_address_required,
-        }
-        return render(self.request, "cart/cart_checkout.html", context)
-
-    def post(self, request):
-        is_prepared = self.order_obj.check_done()
-        if is_prepared:
-            did_charge, crg_msg = self.billing_profile.charge(self.order_obj)
-            if did_charge:
-                self.order_obj.mark_paid() # sort a signal for us
-                self.request.session['cart_items'] = 0
-                del self.request.session['cart_id']
-                if not self.billing_profile.user:
-                    self.billing_profile.set_cards_inactive()
-                return redirect("cart:success")
-            else:
-                print(crg_msg)
-                return redirect("cart:checkout")
-
-class CheckoutDoneView(LoginRequiredMixin, TemplateView):
-    template_name = 'cart/checkout_done.html'

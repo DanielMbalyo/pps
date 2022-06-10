@@ -13,6 +13,7 @@ from django.db.models import Sum
 from django.http import JsonResponse
 
 from src.product.models import UserProduct
+from src.cart.models import Cart, CartItem
 
 User = get_user_model()
 
@@ -54,26 +55,53 @@ class ShopFrontView(ListView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
+        vendor = Vendor.objects.filter(slug=self.kwargs.get('slug')).first()
+        cart = Cart.objects.filter(vendor=vendor).first()
+        cart_item = CartItem.objects.filter(cart=cart)
         context['count'] = self.count or 0
         context['query'] = self.request.GET.get('q')
-        shop = Shop.objects.filter(slug=self.kwargs.get('slug')).first()
-        context['name'] = shop.name
-        context['slug'] = self.kwargs.get('slug')
-        print(self.kwargs.get('slug'))
-        context['products'] = UserProduct.objects.filter(shop=shop)
+        context['cart'] = cart
+        context['items'] = cart_item
         return context
 
     def get_queryset(self, query=None):
         request = self.request
         query = request.GET.get('q', None)
-        shop = Shop.objects.filter(slug=self.kwargs.get('slug')).first()
+        vendor = Vendor.objects.filter(slug=self.kwargs.get('slug')).first()
         if query is not None:
-            results = UserProduct.objects.filter(shop=shop).search(query)
+            results = UserProduct.objects.filter(vendor=vendor).search(query)
             queryset_chain = chain(results)        
             qs = sorted(queryset_chain, key=lambda instance: instance.pk, reverse=True)
             self.count = len(qs)
             return qs
-        return UserProduct.objects.filter(shop=shop)
+        return UserProduct.objects.filter(vendor=vendor)
+
+class ShopProductView(ListView):
+    model = UserProduct
+    template_name = 'shop/shop_product.html'
+    context_object_name = 'products'
+    paginate_by = 20
+    count = 0
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        vendor = Vendor.objects.filter(slug=self.kwargs.get('slug')).first()
+        context['vendor'] = vendor
+        context['count'] = self.count or 0
+        context['query'] = self.request.GET.get('q')
+        return context
+
+    def get_queryset(self, query=None):
+        request = self.request
+        query = request.GET.get('q', None)
+        vendor = Vendor.objects.filter(slug=self.kwargs.get('slug')).first()
+        if query is not None:
+            results = UserProduct.objects.filter(vendor=vendor).search(query)
+            queryset_chain = chain(results)        
+            qs = sorted(queryset_chain, key=lambda instance: instance.pk, reverse=True)
+            self.count = len(qs)
+            return qs
+        return UserProduct.objects.filter(vendor=vendor)
 
 class ShopView(LoginRequiredMixin, ListView):
     model = Shop
@@ -90,11 +118,9 @@ class ShopView(LoginRequiredMixin, ListView):
         context = super().get_context_data(*args, **kwargs)
         vendor = Vendor.objects.filter(slug=self.kwargs.get('slug')).first()
         shop = Shop.objects.filter(owner=vendor).first()
-        self.request.session['vendor'] = None
         context['vendor'] = vendor
         context['shop'] = shop
-        context['product'] = UserProduct.objects.filter(shop=shop).count()
-        context['products'] = UserProduct.objects.filter(shop=shop)
+        context['product'] = UserProduct.objects.filter(vendor=vendor).count()
         # payment = Payment.objects.get(shop=self.get_object())
         # context['commission'] = Commission.objects.filter(shop=self.get_object(), active=True).aggregate(Sum('amount'))['amount__sum']
         # context['investment'] = Investment.objects.filter(shop=self.get_object()).aggregate(Sum('amount'))['amount__sum']
@@ -119,7 +145,7 @@ class VendorCreateView(CreateView):
         if email:
             password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(15))
             vendor = form.save(commit=False)
-            vendor.account = User.objects.create(email=email, password=password, vendor=True)
+            vendor.account = User.objects.create(email=email, password=password, business=True)
             vendor.save()
             self.request.session['email'] = None
             self.request.session['type'] = None

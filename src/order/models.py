@@ -1,3 +1,4 @@
+import uuid
 from itertools import chain
 import math
 import datetime
@@ -7,13 +8,12 @@ from django.db.models import Count, Sum, Avg
 from django.db.models.signals import pre_save, post_save
 from django.shortcuts import reverse, get_object_or_404
 from django.utils import timezone
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.contrib.contenttypes.models import ContentType
 
-from src.address.models import Address
 from src.billing.models import BillingProfile
 from src.cart.models import Cart
-from src.product.models import Product
+from src.product.models import UserProduct
+from src.client.models import Client
+from src.shop.models import Vendor
 
 ORDER_STATUS_CHOICES = (
     ('created', 'Created'),
@@ -90,59 +90,11 @@ class OrderManager(models.Manager):
     def get_queryset(self):
         return OrderManagerQuerySet(self.model, using=self._db)
 
-    def by_request(self, request):
-        return self.get_queryset().by_request(request)
-
-    def new_or_get(self, billing_profile, content_type, obj_id):
-        created = False
-        qs = self.get_queryset().filter(
-            billing_profile=billing_profile,
-            content_type=content_type,
-            object_id=obj_id,
-            active=True,
-            status='created'
-        )
-        if qs.count() == 1:
-            obj = qs.first()
-        else:
-            obj = self.model.objects.create(
-                    billing_profile=billing_profile,
-                    content_type=content_type, object_id=obj_id)
-            created = True
-        return obj, created
-
-    def filter_by_instance(self, request):
-        qs = Package.objects.filter(admin=request.user)
-        package = qs.first()
-        content_cart = ContentType.objects.get(app_label='cart', model='cart')
-        content_book = ContentType.objects.get(app_label='booking', model='booking')
-        sale_orders = super(OrderManager, self).filter(
-            content_type=content_cart).filter(package=package)
-        booking_orders = super(OrderManager, self).filter(
-            content_type=content_book).filter(package=package)
-        queryset_chain = chain(
-            booking_orders,
-            sale_orders,
-        )
-        qs = sorted(
-            queryset_chain,
-            key=lambda instance: instance.pk,
-            reverse=True
-        )
-        return qs
-
 class Order(models.Model):
-    billing_profile = models.ForeignKey(BillingProfile, null=True, blank=True, on_delete=models.CASCADE)
-    order_id = models.CharField(max_length=120, blank=True) # AB31DE3
-    shipping_address = models.ForeignKey(Address, related_name="shipping_address", null=True, blank=True, on_delete=models.CASCADE)
-    billing_address = models.ForeignKey(Address, related_name="billing_address", null=True, blank=True, on_delete=models.CASCADE)
-    shipping_address_final = models.TextField(blank=True, null=True)
-    billing_address_final = models.TextField(blank=True, null=True)
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey('content_type', 'object_id')
-    status = models.CharField(max_length=120, default='created', choices=ORDER_STATUS_CHOICES)
-    shipping_total = models.DecimalField(default=5.99, max_digits=100, decimal_places=2)
+    order_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
+    client = models.ForeignKey(Client, null=True, blank=True, on_delete=models.CASCADE)
+    complete = models.BooleanField(default=False)
     total = models.DecimalField(default=0.00, max_digits=100, decimal_places=2)
     active = models.BooleanField(default=True)
     updated = models.DateTimeField(auto_now=True)
@@ -167,7 +119,6 @@ class Order(models.Model):
         return "Shipping Soon"
 
     def update_total(self):
-        content_cart = ContentType.objects.get(app_label='cart', model='cart')
         instance = get_object_or_404(Cart, id=self.object_id)
         new_total = math.fsum([instance.total, self.shipping_total])
         formatted_total = format(new_total, '.2f')
@@ -220,19 +171,9 @@ class Order(models.Model):
         return self.status
 
 def pre_save_create_order_id(sender, instance, *args, **kwargs):
-    if not instance.order_id:
-        instance.order_id = unique_order_id_generator(instance)
-    qs = Order.objects.filter(content_type=instance.content_type, object_id=instance.object_id
-        ).exclude(billing_profile=instance.billing_profile)
-    if qs.exists():
-        qs.update(active=False)
-
-    if instance.shipping_address and not instance.shipping_address_final:
-        instance.shipping_address_final = instance.shipping_address.get_address()
-
-    if instance.billing_address and not instance.billing_address_final:
-        instance.billing_address_final = instance.billing_address.get_address()
-
+    # if not instance.order_id:
+    #     instance.order_id = unique_order_id_generator(instance)
+    pass
 pre_save.connect(pre_save_create_order_id, sender=Order)
 
 # def post_save_cart_total(sender, instance, created, *args, **kwargs):
@@ -247,8 +188,9 @@ pre_save.connect(pre_save_create_order_id, sender=Order)
 # post_save.connect(post_save_cart_total, sender=Cart)
 
 def post_save_order(sender, instance, created, *args, **kwargs):
-    if created:
-        instance.update_total()
+    # if created:
+    #     instance.update_total()
+    pass
 post_save.connect(post_save_order, sender=Order)
 
 class ProductPurchaseQuerySet(models.query.QuerySet):
@@ -286,9 +228,10 @@ class ProductPurchaseManager(models.Manager):
         return products_qs
 
 class ProductPurchase(models.Model):
-    order_id            = models.CharField(max_length=120)
-    billing_profile     = models.ForeignKey(BillingProfile, on_delete=models.CASCADE) # billingprofile.productpurchase_set.all()
-    product             = models.ForeignKey(Product, on_delete=models.CASCADE) # product.productpurchase_set.count()
+    order               = models.ForeignKey(Order, on_delete=models.CASCADE)
+    product             = models.ForeignKey(UserProduct, on_delete=models.CASCADE) # product.productpurchase_set.count()
+    quantity            = models.PositiveIntegerField(default=1)
+    amount              = models.DecimalField(max_digits=10, decimal_places=2)
     refunded            = models.BooleanField(default=False)
     updated             = models.DateTimeField(auto_now=True)
     timestamp           = models.DateTimeField(auto_now_add=True)

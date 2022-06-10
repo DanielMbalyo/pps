@@ -8,7 +8,7 @@ class VendorForm(forms.ModelForm):
     ))
     middle = forms.CharField(label='Middle Name', widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder':'Middle Name'}
-    ))
+    ), required=False)
     last = forms.CharField(label='Last Name', widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder':'Last Name'}
     ))

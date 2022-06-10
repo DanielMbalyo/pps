@@ -9,7 +9,7 @@ from django.views.generic import (CreateView, DeleteView, DetailView, ListView, 
 from .forms import ProductForm, UserProductForm
 from .models import Product, UserProduct
 
-from src.shop.models import Shop
+from src.shop.models import Shop, Vendor
  
 class ProductListView(LoginRequiredMixin, ListView):
     model = Product
@@ -76,7 +76,12 @@ class UserProductCreateView(LoginRequiredMixin, CreateView):
     template_name = 'product/product_form.html'
 
     def get_success_url(self):
-        return reverse('product:list')
+        self.object = self.get_object()
+        return reverse('shop:product', kwargs={"slug": self.object.slug})
+
+    def get_object(self, *args, **kwargs):
+        instance = get_object_or_404(Vendor, slug=self.kwargs.get('slug'))
+        return instance
 
     def get_context_data(self, **kwargs):
         context = super(UserProductCreateView, self).get_context_data(**kwargs)
@@ -84,7 +89,7 @@ class UserProductCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         product = form.save(commit=False)
-        product.shop = Shop.objects.filter(slug=self.kwargs.get('slug')).first()
+        product.vendor = Vendor.objects.filter(slug=self.kwargs.get('slug')).first()
         messages.success(self.request, "Successfully Created")
         product.save()
         return super(UserProductCreateView, self).form_valid(form)
@@ -106,7 +111,6 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
         messages.success(self.request, "Successfully Updated")
         product.save()
         return super(ProductUpdateView, self).form_valid(form)
-        
 
 class ProductRemoveView(LoginRequiredMixin, DeleteView):
     model = Product

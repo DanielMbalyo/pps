@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <title>Order</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+    integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
+    crossorigin="anonymous"></script>
+  <style>
+    table {
+      caption-side: bottom;
+      border-collapse: collapse;
+    }
+    th {
+      text-align: inherit;
+      text-align: -webkit-match-parent;
+    }
+    thead,
+    tbody,
+    tfoot,
+    tr,
+    td,
+    th {
+      border-color: inherit;
+      /* border-style: solid; */
+      border-width: 0;
+    }
+    .table {
+      --bs-table-bg: transparent;
+      --bs-table-striped-color: #495057;
+      --bs-table-striped-bg: #f8f9fa;
+      --bs-table-active-color: #495057;
+      --bs-table-active-bg: #f8f9fa;
+      --bs-table-hover-color: #495057;
+      --bs-table-hover-bg: #f8f9fa;
+      width: 100%;
+      margin-bottom: 1rem;
+      color: #495057;
+      vertical-align: top;
+      border-color: #eff2f7;
+    }
+    .table> :not(caption)>*>* {
+      /* padding: 0.75rem 0.75rem; */
+      background-color: var(--bs-table-bg);
+      background-image: -webkit-gradient(linear, right top, right bottom, from(var(--bs-table-accent-bg)), to(var(--bs-table-accent-bg)));
+      background-image: linear-gradient(var(--bs-table-accent-bg), var(--bs-table-accent-bg));
+      border-bottom-width: 0px;
+    }
+    .table>tbody {
+      vertical-align: inherit;
+    }
+    .table>thead {
+      vertical-align: bottom;
+    }
+    .table-responsive {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .d-table {
+      display: table !important;
+    }
+    .table th {
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="container-fluid">
+    <!-- <h1>Order </h1><br><hr><br><br> -->
+    <div class="p-5">
+      <img id='qrcode' 
+            src="https://api.qrserver.com/v1/create-qr-code/?data={{token}}&amp;size=250x250" 
+            alt=""  
+            width="250" 
+            height="250" />
+    </div>
+    <h1>Order </h1><br>
+    <div class="table-responsive">
+      <table class="table table-borderless">
+        <thead>
+          <tr>
+            <th scope="col">Item</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for obj in items %}
+          <tr>
+            <td scope="row">{{obj.product}}</td>
+            <td scope="row">{{obj.quantity}}</td>
+            <td scope="row">{{obj.amount}}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <br>
+    <div class="table-responsive">
+      <table class="table table-borderless">
+        <thead>
+          <tr>
+            <th scope="col">Details</th>
+            <th scope="col">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td scope="row"> Total: </td>
+            <td scope="row"> <strong> Tshs {{object.total}} </strong> </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <!-- <br><br> -->
+    <!-- <p>{{object.notes}}</p> -->
+  </div>
+</body>
+</html>
