@@ -90,6 +90,12 @@ class OrderManager(models.Manager):
     def get_queryset(self):
         return OrderManagerQuerySet(self.model, using=self._db)
 
+    def search(self, query):
+        lookups = (
+            models.Q(order_id__icontains=query) 
+        )
+        return self.filter(lookups).distinct()
+
 class Order(models.Model):
     order_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
