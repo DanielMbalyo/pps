@@ -67,8 +67,8 @@ class OrderDetailView(LoginRequiredMixin, DetailView):
                 ('Accept-Encoding', 'gzip')
             ],
         }
-        # config = pdfkit.configuration(wkhtmltopdf='/app/bin/wkhtmltopdf')
-        config = pdfkit.configuration(wkhtmltopdf='C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe')
+        config = pdfkit.configuration(wkhtmltopdf='/app/bin/wkhtmltopdf')
+        # config = pdfkit.configuration(wkhtmltopdf='C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe')
         file_invoice = pdfkit.from_string(html, False, configuration=config, options=options)
         response = HttpResponse(file_invoice, content_type='application/pdf')
         response['Content-Disposition'] = 'inline; filename = {}'.format(filename)
