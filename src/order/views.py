@@ -37,9 +37,9 @@ class OrderListView(LoginRequiredMixin, ListView):
         if self.request.user.staff:
             return Order.objects.all()
         elif self.request.user.business:
-            return  Order.objects.filter(vendor=self.request.user.get_acc()).search(query)
+            return  Order.objects.filter(vendor=self.request.user.get_acc())
         else:
-            return Order.objects.filter(client=self.request.user.get_acc()).search(query)
+            return Order.objects.filter(client=self.request.user.get_acc())
 
 class OrderDetailView(LoginRequiredMixin, DetailView):
     model = Order

@@ -1,0 +1,9 @@
+Hello,
+
+We have following reviews for your account {{ email }} :
+
+{{reason}}
+
+Thank you,
+
+Dev Team

@@ -23,10 +23,45 @@ IDS = (
     ('licence', 'Driving Licence'),
 )
 
+STATUS = (
+    ('employed', 'Employed'),
+    ('not-employed', 'Not Employed'),
+)
+
 SOURCE = (
-    ('employment', 'Employment'),
     ('consultant', 'Consultant'),
     ('business', 'Business'),
+    ('freelance', 'Freelance'),
+)
+
+RANGE = (
+    ('Grade 1', 'Below 150,000'),
+    ('Grade 2', '150,000-250,000'),
+    ('Grade 3', '250,000-350,000'),
+    ('Grade 4', '350,000-550,000'),
+    ('Grade 5', '550,000-750,000'),
+    ('Grade 6', '750,000-1,000,000'),
+    ('Grade 7', 'Above 1,000,000'),
+)
+
+DURATION = (
+    ('Duration 1', 'Less Than 3 Months'),
+    ('Duration 2', '3 Months-6 Months'),
+    ('Duration 3', '6 Months-1 Year'),
+    ('Duration 4', '1 Year-2 Years'),
+    ('Duration 5', '2 Years-3 Years'),
+    ('Duration 6', '3 Years-5 Years'),
+    ('Duration 7', 'Above 5 Years'),
+)
+
+DEPENDANTS = (
+    ('0', '0 Dependant'),
+    ('1', '1 Dependant'),
+    ('2', '2 Dependant'),
+    ('3', '3 Dependant'),
+    ('4', '4 Dependant'),
+    ('5', '5 Dependant'),
+    ('Above', 'Above 5'),
 )
 
 def upload_location(instance, filename):
@@ -52,7 +87,9 @@ class Client(models.Model):
     gender = models.CharField(max_length=200,  default='unspecified', choices=GENDER)
     dob = models.DateField(null=False, blank=False)
     citizenship = models.CharField(max_length=200, null=False, blank=True,  default='Tanzanian')
-    location = models.CharField(max_length=200, blank=True, null=True)
+    region = models.CharField(max_length=200, blank=True, null=True)
+    district = models.CharField(max_length=200, blank=True, null=True)
+    street = models.CharField(max_length=200, blank=True, null=True)
     martial = models.CharField(max_length=200,  default='single', choices=MARTIAL)
     identification = models.CharField(max_length=200,  default='single', choices=IDS)
     id_number = models.CharField(max_length=200,  default="00000000000000")
@@ -79,13 +116,15 @@ class Client(models.Model):
 
 class Finance(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    status = models.CharField(max_length=200,  default='employed', choices=STATUS)
     source = models.CharField(max_length=200,  default='employed', choices=SOURCE)
     employer = models.CharField(max_length=200,  default="None")
+    position = models.CharField(max_length=200,  default="None")
     branch = models.CharField(max_length=200, blank=True, null=True)
     referee = models.CharField(max_length=200,  default="0712345743")
-    duration = models.CharField(max_length=200,  default="1")
-    range = models.FloatField(max_length=200, default=0.00)
-    dependants = models.CharField(max_length=200, null=False, blank=True, default='0') 
+    duration = models.CharField(max_length=200, default="Duration 1", choices=DURATION)
+    range = models.CharField(max_length=200,  default="Grade 1", choices=RANGE)
+    dependants = models.CharField(max_length=200, null=False, blank=True, default='0', choices=DEPENDANTS) 
     timestamp = models.DateTimeField(auto_now_add=True)
 
     objects = ClientManager()

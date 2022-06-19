@@ -8,8 +8,10 @@ from django.views.generic import (
 )
 from itertools import chain
 from .models import Client, Finance
-from .forms import ClientForm, FinanceForm
+from .forms import ClientForm, FinanceForm, InquiryForm
 from django.db.models import Sum
+from django.core.mail import send_mail
+from django.template.loader import get_template
 
 from src.shop.models import Shop
 
@@ -72,6 +74,11 @@ class ClientCreateView(CreateView):
     def get_success_url(self):
         return reverse('client:finance')
 
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['title'] = 'Personal Details'
+        return context    
+
     def form_valid(self, form):
         email = self.request.session.get('email')
         if email:
@@ -94,6 +101,11 @@ class ClientFinanceView(CreateView):
     def get_success_url(self):
         return reverse('client:summary')
 
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['title'] = 'Income Details'
+        return context
+
     def form_valid(self, form):
         id = self.request.session.get('client')
         client = form.save(commit=False)
@@ -101,6 +113,54 @@ class ClientFinanceView(CreateView):
         client.save()
         messages.success(self.request, "Successfully Created")
         return super(ClientFinanceView, self).form_valid(form)
+
+class ClientInquireView(CreateView):
+    form_class = InquiryForm
+    template_name = 'client/client_form.html'
+
+    def get_success_url(self):
+        return reverse('client:list')
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['title'] = 'Inqure Form'
+        return context
+
+    def form_valid(self, form):
+        instance = get_object_or_404(Client, slug=self.kwargs.get('slug'))
+        inqury = self.request.POST.get("inqury")
+        context = {'reason': inquiry,}
+        txt_ = get_template("account/emails/reply.txt").render(context)
+        html_ = get_template("account/emails/reply.html").render(context)
+        sent_mail = send_mail(
+            'Futher Inquiry', txt_, settings.DEFAULT_FROM_EMAIL,
+            [instance.account.email], html_message=html_, fail_silently=False,)
+        messages.success(self.request, "Email Successfully Sent")
+        return super(ClientInquireView, self).form_valid(form)
+
+class ClientRejectView(CreateView):
+    form_class = InquiryForm
+    template_name = 'client/client_form.html'
+
+    def get_success_url(self):
+        return reverse('client:list')
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['title'] = 'Reject Form'
+        return context
+
+    def form_valid(self, form):
+        instance = get_object_or_404(Client, slug=self.kwargs.get('slug'))
+        inqury = self.request.POST.get("inqury")
+        context = {'reason': inquiry,}
+        txt_ = get_template("account/emails/reply.txt").render(context)
+        html_ = get_template("account/emails/reply.html").render(context)
+        sent_mail = send_mail(
+            'Request Rejection', txt_, settings.DEFAULT_FROM_EMAIL,
+            [instance.account.email], html_message=html_, fail_silently=False,)
+        messages.success(self.request, "Email Successfully Sent")
+        return super(ClientRejectView, self).form_valid(form)
 
 class ClientSummaryView(ListView):
     template_name = 'client/summary.html'

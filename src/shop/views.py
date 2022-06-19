@@ -8,9 +8,11 @@ from django.views.generic import (
 )
 from itertools import chain
 from .models import Shop, Vendor
-from .forms import ShopForm, VendorForm
+from .forms import ShopForm, VendorForm, InquiryForm
 from django.db.models import Sum
 from django.http import JsonResponse
+from django.core.mail import send_mail
+from django.template.loader import get_template
 
 from src.product.models import UserProduct
 from src.cart.models import Cart, CartItem
@@ -137,7 +139,7 @@ class VendorCreateView(CreateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context['title'] = 'Create Shop'
+        context['title'] = 'Vendor Details'
         return context
 
     def form_valid(self, form):
@@ -164,7 +166,7 @@ class ShopCreateView(CreateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context['title'] = 'Create Shop'
+        context['title'] = 'Shop Details'
         return context
 
     def form_valid(self, form):
@@ -174,6 +176,54 @@ class ShopCreateView(CreateView):
         shop.save()
         messages.success(self.request, "Successfully Created")
         return super(ShopCreateView, self).form_valid(form)
+
+class ShopInquireView(CreateView):
+    form_class = InquiryForm
+    template_name = 'shop/shop_form.html'
+
+    def get_success_url(self):
+        return reverse('shop:list')
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['title'] = 'Inqure Form'
+        return context
+
+    def form_valid(self, form):
+        instance = get_object_or_404(Vendor, slug=self.kwargs.get('slug'))
+        inqury = self.request.POST.get("inqury")
+        context = {'reason': inquiry,}
+        txt_ = get_template("account/emails/reply.txt").render(context)
+        html_ = get_template("account/emails/reply.html").render(context)
+        sent_mail = send_mail(
+            'Futher Inquiry', txt_, settings.DEFAULT_FROM_EMAIL,
+            [instance.account.email], html_message=html_, fail_silently=False,)
+        messages.success(self.request, "Email Successfully Sent")
+        return super(ShopInquireView, self).form_valid(form)
+
+class ShopRejectView(CreateView):
+    form_class = InquiryForm
+    template_name = 'shop/shop_form.html'
+
+    def get_success_url(self):
+        return reverse('shop:list')
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['title'] = 'Reject Form'
+        return context
+
+    def form_valid(self, form):
+        instance = get_object_or_404(Vendor, slug=self.kwargs.get('slug'))
+        inqury = self.request.POST.get("inqury")
+        context = {'reason': inquiry,}
+        txt_ = get_template("account/emails/reply.txt").render(context)
+        html_ = get_template("account/emails/reply.html").render(context)
+        sent_mail = send_mail(
+            'Request Rejection', txt_, settings.DEFAULT_FROM_EMAIL,
+            [instance.account.email], html_message=html_, fail_silently=False,)
+        messages.success(self.request, "Email Successfully Sent")
+        return super(ShopRejectView, self).form_valid(form)
 
 class ShopSummaryView(ListView):
     template_name = 'shop/summary.html'

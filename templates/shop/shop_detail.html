@@ -57,7 +57,8 @@
             </div>
           </div>
     </div>
-    <div class="row">
+    {% if user.staff %}
+     <div class="row">
       <div class="col-lg-6 grid-margin stretch-card">
         <div class="card">
           <div class="card-body">
@@ -142,11 +143,11 @@
                   <tr>
                     <td>Actions</td>
                     <td>
-                      {% if not obj.account.is_active %}
-                        <a href="{% url 'account:admin_activate' vendor.account.uid %}" class="btn btn-sm btn-outline-secondary">Activate</a>
-                      {% else %}
-                        <a href="{% url 'account:admin_deactivate' vendor.account.uid %}" class="btn btn-sm btn-outline-secondary">Deactivate</a>
-                      {% endif %}
+                      <div class="btn-group mr-2">
+                        <a href="{% url 'account:admin_activate' vendor.account.uid %}" class="btn btn-sm btn-outline-secondary">Accept</a>
+                        <a href="{% url 'shop:detail' obj.slug %}" class="btn btn-sm btn-outline-secondary">Reject</a>
+                        <a href="{% url 'shop:detail' obj.slug %}" class="btn btn-sm btn-outline-secondary">Inqury</a>
+                      </div>
                     </td>
                   </tr>
                   {% endif %}
@@ -156,6 +157,9 @@
           </div>
         </div>
       </div>
+    {% else %}
+    {% endif %}
+    
   
   <!-- content-wrapper ends -->
 </div>
