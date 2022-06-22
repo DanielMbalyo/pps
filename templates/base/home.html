@@ -19,20 +19,42 @@
                   </div>
                 </div>
             </div>
-            {% if shops %}
+            {% if products %}
             <div class="no-gutters row px-1">
-                {% for obj in shops %}<a href=""></a>
+                {% for obj in products %}<a href=""></a>
                 <div class="col-12 px-1 pb-2">
                     <div class="card-body py-0 p-1">
-                        <h5 class="card-title mb-0">{{ obj.name }}</h5>
+                        <h5 class="card-title mb-0">{{ obj.product }}</h5>
                         <div class="row"> 
                             <div class="col-9">
-                                <p class="card-text m-0 px-1"><small class="m-0">{{ obj.location }}</small></p>
-                                <p class="card-text m-0 px-1"><small class="">X Meters Away</small></p>
+                                <p class="card-text m-0 px-1"><small class="m-0">{{ obj.sale_price }}</small></p>
+                                <!-- <p class="card-text m-0 px-1"><small class="">X Meters Away</small></p> -->
                             </div>
                             <div class="col-3 pt-2">
                                 <div class="btn-group py-auto" >
-                                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="">
+                                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="getDirections()">
+                                    Directions</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div><br>
+            {% elif shops %}
+            <div class="no-gutters row px-1">
+                {% for obj in shops %}<a href=""></a>
+                <div class="col-12 pb-2">
+                    <div class="card-body py-0">
+                        <h5 class="card-title mb-0">{{ obj.name }}</h5>
+                        <div class="row"> 
+                            <div class="col-9">
+                                <p class="card-text m-0 px-1"><small class="m-0">{{ obj.street }}, {{ obj.district }}</small></p>
+                                <p class="card-text m-0 px-1"><small class="">{{ obj.opening }} - {{ obj.closing }}</small></p>
+                            </div>
+                            <div class="col-3 pt-2">
+                                <div class="btn-group py-auto" >
+                                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="getRoute([{{obj.lon}} , {{obj.lat}}])">
                                     Directions</button>
                                 </div>
                             </div>
@@ -49,30 +71,88 @@
         </div>
     </div>
 </div>
-
+<script src=https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.0.2/mapbox-gl-directions.js></script>
+<link rel="stylesheet" href=https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.0.2/mapbox-gl-directions.css type="text/css" />
 <script>
-    if ( navigator.geolocation ) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-            var lng = position.coords.longitude;
-            var lat = position.coords.latitude;                    
-            mapboxgl.accessToken = 'pk.eyJ1IjoiZGFubWJhbHlvIiwiYSI6ImNsMnJ4MWt1ZDAweDgza2xtZXBmOHhqNHIifQ.bknxyhEpG3_g4TwTlFxxKA';
-            var map = new mapboxgl.Map({
-                container: 'map',          
-                style: 'mapbox://styles/mapbox/streets-v11',
-                center: [ lng, lat ], // [ lng, lat ]
-                zoom: 13
-            });
-            var marker = new mapboxgl.Marker({ color: 'black'})
-                .setLngLat([lng, lat])
-                .setPopup(new mapboxgl.Popup().setHTML("<p>{{ user.get_name }}</p>"))
-                .addTo(map);
-            {% for shop in shops %}
-            var marker = new mapboxgl.Marker()
-                .setLngLat(["{{ shop.lon }}", "{{ shop.lat }}"])
-                .setPopup(new mapboxgl.Popup().setHTML("<p>{{ shop.name }}</p>"))
-                .addTo(map);
-            {% endfor %}
-        });
-    }
+	mapboxgl.accessToken = 'pk.eyJ1IjoiZGFubWJhbHlvIiwiYSI6ImNsMnJ4MWt1ZDAweDgza2xtZXBmOHhqNHIifQ.bknxyhEpG3_g4TwTlFxxKA';
+	var start = [ 39.2197603, -6.7727897 ];
+	var map = new mapboxgl.Map({
+		container: 'map',          
+		style: 'mapbox://styles/mapbox/streets-v11',
+		center: [ 39.2197603, -6.7727897 ], // [ lng, lat ]
+		zoom: 13
+	});
+
+	var geolocate = new mapboxgl.GeolocateControl({
+		positionOptions: { enableHighAccuracy: true },
+		trackUserLocation: true
+	});
+
+  map.addControl(geolocate);
+	geolocate.on('geolocate', function(position) {
+		start = [position.coords.longitude, position.coords.latitude];
+		console.log(`latitude: ${position.coords.latitude}, longitude: ${position.coords.longitude}`);
+	});
+
+  map.on('load', () => {
+		geolocate.trigger();
+		{% if shops %}
+				{% for shop in shops %}
+				var marker = new mapboxgl.Marker()
+						.setLngLat(["{{ shop.lon }}", "{{ shop.lat }}"])
+						.setPopup(new mapboxgl.Popup().setHTML("<p>{{ shop.name }}</p>"))
+						.addTo(map);
+				{% endfor %}
+		{% elif products %}
+				{% for product in products %}
+				var marker = new mapboxgl.Marker()
+						.setLngLat(["{{ product.vendor.lon }}", "{{ product.vendor.lat }}"])
+						.setPopup(new mapboxgl.Popup().setHTML("<p>{{ product.product }}</p>"))
+						.addTo(map);
+				{% endfor %}
+		{% endif %}
+
+		// map.addLayer({
+    //   id: 'point', type: 'circle',
+    //   source: { type: 'geojson', data: {
+    //     type: 'FeatureCollection', features: [
+    //       { type: 'Feature', properties: {},
+    //         geometry: { type: 'Point', coordinates: start }
+    //       }
+    //     ]
+    //   }},
+    //   paint: { 'circle-radius': 10, 'circle-color': '#3887be' }
+    // });
+
+	});
+
+	async function getRoute(end) {
+		const query = await fetch(
+			`https://api.mapbox.com/directions/v5/mapbox/cycling/${start[0]},${start[1]};${end[0]},${end[1]}?steps=true&geometries=geojson&access_token=${mapboxgl.accessToken}`,
+			{ method: 'GET' }
+		);
+		const json = await query.json();
+		const data = json.routes[0];
+		const route = data.geometry.coordinates;
+		const geojson = {
+			type: 'Feature', properties: {},
+			geometry: { type: 'LineString', coordinates: route }
+		};
+		if (map.getSource('route')) {
+				map.getSource('route').setData(geojson);
+		} else {
+			map.addLayer({
+				id: 'route', type: 'line',
+				source: { type: 'geojson', data: geojson },
+				layout: { 'line-join': 'round', 'line-cap': 'round' },
+				paint: { 'line-color': '#3887be', 'line-width': 5, 'line-opacity': 0.75 }
+			});
+			const coordinates = geojson.features[0].geometry.coordinates;
+			const bounds = new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]);
+			for (const coord of coordinates) { bounds.extend(coord); }
+			map.fitBounds(bounds, { padding: 20 });
+		}
+
+	}
 </script>
 {% endblock %}

@@ -11,6 +11,8 @@ from django.views.generic import FormView, TemplateView, UpdateView, CreateView
 from .forms import (ActivateForm, ChangePassForm, LoginForm, ResetPassForm,
                     SetPassForm, UserForm, RegistrationForm)
 from .models import EmailActivation
+from src.client.forms import ClientForm
+from src.shop.forms import VendorForm
 
 User = get_user_model()
 
@@ -190,11 +192,12 @@ class SettingView(LoginRequiredMixin, TemplateView):
         if user.staff:
             manager = user.manager_set.all().first()
             context["acc_form"] = ManagerForm(self.request.POST or None, instance=manager)
+        elif user.business:
+            manager = user.vendor_set.all().first()
+            context["acc_form"] = VendorForm(self.request.POST or None, instance=manager)
         else:
             client = user.client_set.all().first()
-            address = Address.objects.filter(client=client).first()
             context["acc_form"] = ClientForm(self.request.POST or None, instance=client)
-            context["address_form"] = AddressForm(self.request.POST or None, instance=address)
         context["user_form"] = UserForm(self.request.POST or None, instance=self.request.user)
         context['pass_form'] = ChangePassForm(self.request.POST or None,)
         return context

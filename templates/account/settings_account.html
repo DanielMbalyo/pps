@@ -2,13 +2,13 @@
 {% block title %}Settings{% endblock %}
 {% block content %}
 {% load static %}
-<div class="container-fluid">
-  <div class="row">
-    {% if user.staff %}
-    {% include 'commons/sidebar.html' %}
-    {% else %}
-    {% include 'commons/sidebar_clnt.html' %}
-    {% endif %}
+{% if user.staff %}
+{% include 'commons/sidebar.html' %}
+{% elif user.business %}
+{% include 'commons/sidebar_shop.html' %}
+{% else %}
+{% include 'commons/sidebar_clnt.html' %}
+{% endif %}
     <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4 mb-0">
       <div
         class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center px-3 pb-2 my-4 border-bottom">
@@ -73,6 +73,37 @@
         </div>
         </section>
         <hr>
+        {% if user_form.is_multipart %}
+        <section>
+          <div class='row p-3'>
+            <div class="col-4 p-5">
+              <h1 class="h4">Profile Settings</h1>
+              <small>Change settings that identify you in our system here.</small>
+            </div>
+            <div class='col-8'>
+              {% if other_form.is_multipart %}
+              <form enctype="multipart/form-data" method='POST' action='{% url "account:update_user" user.uid %}'>
+                {% else %}
+                <form method='POST' action='{% url "account:update_user" user.uid %}'>
+                  {% endif %}
+                  {% csrf_token %}
+                  <input type='hidden' name='next' value='{{ request.build_absolute_uri}}' />
+                  {% for field in other_form %}
+                  <div class="form-group row">
+                    <div class="col-sm-offset-1 col-sm-9 mr-auto">
+                      {{field}}
+                    </div>
+                    {% for error in field.errors %}
+                    <small class="form-text text-muted-danger">{{ error }}</small>
+                    {% endfor %}
+                  </div>
+                  {% endfor%}
+                  <button type="submit" class="btn btn-outline-secondary">Save Changes</button>
+                </form>
+            </div>
+          </section>
+          <hr>
+        {% endif %}
         <section>
           <div class='row p-3'>
             <div class="col-4 p-5">
@@ -104,7 +135,5 @@
         </section>
         <hr>
     </main>
-  </div>
-</div>
 {% endblock %}
 {% block footer %}{% endblock %}

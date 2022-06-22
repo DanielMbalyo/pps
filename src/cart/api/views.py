@@ -16,14 +16,13 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from src.order.models import Order
-from src.product.models import Product
-from src.address.models import Address
+from src.product.models import UserProduct
 
 from .mixins import TokenMixin
-from src.billing.models import BillingProfile
 from src.cart.models import Cart, CartItem
-from src.address.api.serializers import UserAddressSerializer
+from src.shop.models import Vendor
 from .serializers import CartItemSerializer, CheckoutSerializer, FinalizedCheckoutSerializer
+from decimal import Decimal
 
 User = settings.AUTH_USER_MODEL
 """
@@ -36,16 +35,15 @@ python -m SimpleHTTPServer 8080
 
 """
 class CartAPIView(TokenMixin, APIView):
-    authentication_classes = [SessionAuthentication]
+    # authentication_classes = [SessionAuthentication]
 	# permission_classes = [IsAuthenticated]
 
-    def get(self, request, format=None):
-        cart_obj, cart_created = Cart.objects.new_or_get(self.request)
+    def get(self, request, format=None, **kwargs):
+        vendor = Vendor.objects.filter(id=self.kwargs.get('id')).first()
+        cart_obj = Cart.objects.filter(vendor=vendor).first()
         cart_item = CartItem.objects.filter(cart=cart_obj)
         items = CartItemSerializer(cart_item, many=True)
-        billing_profile, created = BillingProfile.objects.new_or_get(request)
         data = {
-            "billing_id" : billing_profile.customer_id,
             "cart_id" : cart_obj.id,
             "total": cart_obj.total,
             "subtotal": cart_obj.subtotal,
@@ -53,71 +51,64 @@ class CartAPIView(TokenMixin, APIView):
             "count": cart_item.count(),
             "items": items.data,
         }
-        request.session['cart_token'] = str(self.create_token(data))
         return Response(data)
 
 class CartUpdateAPIView(APIView):
-    authentication_classes = [SessionAuthentication]
-
-    def get(self, **kwargs):
-        product_id = kwargs.get('product_id')
-        qty = kwargs.get('qty')
-        data = {}
-        flash_message = ''
-        cart_obj, cart_created = Cart.objects.new_or_get(self.request)
-        print(cart_obj)
-        if cart_obj:
-            if product_id:
-                item_instance = get_object_or_404(Product, id=product_id)
-                cart_item, created = CartItem.objects.get_or_create(
-                    cart=cart_obj, product=item_instance, quantity=qty
-                )
-                if created:
-                    flash_message = "Successfully added to the cart"
-                    item_added = True
-                # cart_item.quantity = int(qty)
-                cart_item.save()
-                data = {
-                    'message' : flash_message,
-                }
+    # authentication_classes = [SessionAuthentication]
+    def get(self, *args, **kwargs):
+        cart = Cart.objects.filter(id=self.kwargs.get('id'))
+        if cart:
+            item_id = self.kwargs.get('product_id')
+            if item_id:
+                product = UserProduct.objects.filter(id=item_id).first()
+                item = CartItem.objects.create(cart=cart.first(), product=product)
+                subtotal = item.cart.subtotal + Decimal(item.product_total)
+                tax_total = round(subtotal * Decimal(item.cart.tax_percentage), 2) #8.5%
+                total = round(subtotal + Decimal(tax_total), 2)
+                item.cart.subtotal = "%.2f" %(subtotal)
+                item.cart.tax_total = "%.2f" %(tax_total)
+                item.cart.total = "%.2f" %(total)
+                item.cart.save()
+                data = { 'message' : "Successfully added to the cart", }
+            else:
+                data = { 'message' : "Failed To Add To Cart", }
         return Response(data)
 
-class CartDeleteAPIView(APIView):
-    def get(self, **kwargs):
-        product_id = kwargs.get('product_id')
-        cart_obj, cart_created = Cart.objects.new_or_get(self.request)
-        if cart_obj:
-            item_id = self.request.GET.get("product_id")
+class CartDeleteAPIView(APIView):    
+    def get(self, *args, **kwargs):
+        cart = Cart.objects.filter(id=self.kwargs.get('id'))
+        if cart:
+            item_id = self.kwargs.get('product_id')
             if item_id:
-                item_instance = get_object_or_404(Product, id=item_id)
-                cart_item, created = CartItem.objects.get_or_create(cart=cart_obj, item=item_instance)
-                cart_item.delete()
-                flash_message = "Quantity has been updated successfully."
-        # return Response(data)
+                product = UserProduct.objects.filter(id=item_id).first()
+                item = CartItem.objects.filter(cart=cart.first(), product=product).first()
+                subtotal = item.cart.subtotal - Decimal(item.product_total)
+                tax_total = round(subtotal * Decimal(item.cart.tax_percentage), 2) #8.5%
+                total = round(subtotal + Decimal(tax_total), 2)
+                item.cart.subtotal = "%.2f" %(subtotal)
+                item.cart.tax_total = "%.2f" %(tax_total)
+                item.cart.total = "%.2f" %(total)
+                item.cart.save()
+                item.delete()
+                data = { 'message' : "Successfully Removed From Cart", }
+            else:
+                data = { 'message' : "Failed To Remove From Cart", }
+        return Response(data)
 
 class CartClearAPIView(APIView):
     def get(self, *args, **kwargs):
-        cart_obj, cart_created = Cart.objects.new_or_get(self.request)
+        vendor = Vendor.objects.filter(id=self.kwargs.get('id')).first()
+        cart_obj = Cart.objects.filter(vendor=vendor).first()
         if cart_obj:
-            count = cart_obj.products.count()
-            if count >= 1:
-                cart_item = CartItem.objects.filter(cart=cart_obj)
-                cart_item.delete()
-        # return Response(data)
-
-class ItemCountView(View):
-    def get(self, request, *args, **kwargs):
-        if request.is_ajax():
-            cart_id = self.request.session.get("cart_id")
-            if cart_id is None:
-                count = 0
+            cart_item = CartItem.objects.filter(cart=cart_obj)
+            if cart_item:
+                for obj in cart_item:
+                    obj.delete()
+                data = { 'message' : "Successful Cleared Cart", }
             else:
-                cart = Cart.objects.get(id=cart_id)
-                count = cart.items.count()
-            request.session["cart_item_count"] = count
-            return JsonResponse({"count": count})
-        else:
-            raise Http404
+                data = { 'message' : "Failed To Clear Cart", }
+            cart_obj.clear()
+        return Response(data)
 
 class CheckoutAPIView(TokenMixin, APIView):
     # authentication_classes = [SessionAuthentication]

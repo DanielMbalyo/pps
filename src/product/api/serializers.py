@@ -1,78 +1,45 @@
-from rest_framework.serializers import (
-    HyperlinkedIdentityField,
-    ModelSerializer,
-    SerializerMethodField
-    )
+from rest_framework import serializers
+from src.account.api.serializers import UserSerializer
+from src.product.models import Product, UserProduct
+from src.shop.models import Shop, Vendor
 
-from src.account.api.serializers import UserDetailSerializer
-from src.comment.api.serializers import CommentSerializer
-from src.comment.models import Comment
-
-from src.product.models import Product
-
-product_detail_url = HyperlinkedIdentityField(
-        view_name='product_api:detail',
-        lookup_field='slug'
-        )
-
-class ProductCreateUpdateSerializer(ModelSerializer):
+class ProductListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = [
-            'title',
-            'description',
-            'price',
-            'featured',
-            'active',
-            'is_digital',
-        ]
-
-class ProductDetailSerializer(ModelSerializer):
-    url = product_detail_url
-    user = UserDetailSerializer(read_only=True)
-    image = SerializerMethodField()
-    comments = SerializerMethodField()
-    class Meta:
-        model = Product
-        fields = [
-            'url',
             'id',
-            'user',
             'title',
-            'slug',
-            'description',
             'price',
-            'featured',
             'active',
-            'is_digital',
             'image',
-            'comments',
         ]
 
-    def get_image(self, obj):
-        try:
-            image = obj.image.url
-        except:
-            image = None
-        return image
-
-    def get_comments(self, obj):
-        c_qs = Comment.objects.filter_by_instance(obj)
-        comments = CommentSerializer(c_qs, many=True).data
-        return comments
-
-class ProductListSerializer(ModelSerializer):
-    url = product_detail_url
-    user = UserDetailSerializer(read_only=True)
+class UserProductListSerializer(serializers.ModelSerializer):
+    product = ProductListSerializer(read_only=True)
     class Meta:
-        model = Product
+        model = UserProduct
         fields = [
-            'url',
-            'user',
-            'title',
+            'id',
             'description',
-            'price',
-            'featured',
+            'sale_price',
+            'quantity',
             'active',
-            'is_digital',
+            'product',
         ]
+
+class ProductCreateSerializer(serializers.Serializer):
+    product = serializers.CharField(required=True, allow_blank=False, max_length=100)
+    vendor = serializers.CharField(required=True, allow_blank=False, max_length=100)
+    description = serializers.CharField(required=True, allow_blank=False, max_length=100)
+    sale_price = serializers.CharField(required=True, allow_blank=False, max_length=100)
+    quantity = serializers.CharField(required=True, allow_blank=False, max_length=100)
+
+    def create(self, validated_data):
+        product = Product.objects.filter(id=validated_data['product']).first()
+        vendor = Vendor.objects.filter(id=validated_data['vendor']).first()
+        UserProduct.objects.create(
+            product=product, vendor=vendor, description=validated_data['description'],
+            sale_price=validated_data["sale_price"], quantity=validated_data["quantity"], active=True,
+        )
+        return validated_data
+

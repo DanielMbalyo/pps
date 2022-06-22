@@ -49,7 +49,7 @@ class Product(models.Model):
 class UserProductManager(models.Manager):
     def search(self, query):
         lookups = (
-            models.Q(product_title__icontains=query) |
+            # models.Q(product__icontains=query) |
             models.Q(slug__icontains=query)
         )
         return self.filter(lookups).distinct()

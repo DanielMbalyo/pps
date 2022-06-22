@@ -22,19 +22,9 @@ class OrderDetailSerializer(serializers.ModelSerializer):
 		return obj.cart.subtotal
 
 class OrderSerializer(serializers.ModelSerializer):
-	# subtotal = serializers.SerializerMethodField()
 	class Meta:
 		model = Order
 		fields = [
-			"id",
-			# "user",
-			"shipping_address",
-			"billing_address",
-			# "shipping_total_price",
-			# "subtotal",
-			"total",
+			"order_id", "vendor", "client",
+			"complete", "active", "total",
 		]
-
-	def get_subtotal(self, obj):
-		return obj.cart.subtotal
-

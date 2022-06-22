@@ -10,17 +10,22 @@ from rest_framework.permissions import (
     IsAdminUser, IsAuthenticatedOrReadOnly,
     )
 
-from src.shop.models import Shop
-
-from .serializers import ShopSerializer
+from src.shop.models import Shop, Vendor
+from .serializers import ShopSerializer, VendorSerializer, ShopCreateSerializer, VendorCreateSerializer
 
 class ShopCreateAPIView(generics.CreateAPIView):
-    queryset = Shop.objects.all()
-    serializer_class = ShopSerializer
+    serializer_class = ShopCreateSerializer
     #permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save()
+
+class VendorCreateAPIView(generics.CreateAPIView):
+    serializer_class = VendorCreateSerializer
+    #permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save()
 
 class ShopDetailAPIView(generics.RetrieveAPIView):
     queryset = Shop.objects.all()
@@ -46,21 +51,30 @@ class ShopDeleteAPIView(generics.DestroyAPIView):
     permission_classes = [IsOwnerOrReadOnly]
     #lookup_url_kwarg = "abc"
 
-
 class ShopListAPIView(generics.ListAPIView):
     serializer_class = ShopSerializer
     filter_backends= [SearchFilter, OrderingFilter]
-    search_fields = ['title', 'body', 'user__username']
-    pagination_class = ShopPageNumberPagination #PageNumberPagination
+    pagination_class = ShopPageNumberPagination
 
     def get_queryset(self, *args, **kwargs):
-        queryset_list = Shop.objects.filter(package=self.request.package)
+        queryset_list = Shop.objects.all()
         query = self.request.GET.get("q")
         if query:
             queryset_list = queryset_list.filter(
-                    Q(name__icontains=query)
-                    # Q(body__icontains=query)|
-                    # Q(user__first_name__icontains=query) |
-                    # Q(user__last_name__icontains=query)
-                    ).distinct()
+                Q(name__icontains=query)
+            ).distinct()
+        return queryset_list
+
+class VendorListAPIView(generics.ListAPIView):
+    serializer_class = VendorSerializer
+    filter_backends= [SearchFilter, OrderingFilter]
+    pagination_class = ShopPageNumberPagination
+
+    def get_queryset(self, *args, **kwargs):
+        queryset_list = Vendor.objects.all()
+        query = self.request.GET.get("q")
+        if query:
+            queryset_list = queryset_list.filter(
+                Q(name__icontains=query)
+            ).distinct()
         return queryset_list

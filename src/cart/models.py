@@ -43,7 +43,7 @@ class Cart(models.Model):
     active = models.BooleanField(default=True)
 
     def __str__(self):
-        return str(self.vendor)
+        return self.vendor
 
     class Meta:
         ordering = ["-timestamp",]
@@ -67,30 +67,19 @@ class Cart(models.Model):
         self.total = 0.00
         self.save()
 
-def do_tax_and_total_receiver(sender, instance, *args, **kwargs):
-    if instance.subtotal:
-        subtotal = Decimal(instance.subtotal)
-        tax_total = round(subtotal * Decimal(instance.tax_percentage), 2) #8.5%
-        total = round(subtotal + Decimal(tax_total), 2)
-        instance.tax_total = "%.2f" %(tax_total)
-        instance.total = "%.2f" %(total)
-        instance.save()
-    else:
-        instance.total = 0.00
-pre_save.connect(do_tax_and_total_receiver, sender=Cart)
+# def do_tax_and_total_receiver(sender, instance, *args, **kwargs):
+#     if instance.subtotal:
+#         subtotal = Decimal(instance.subtotal)
+#         tax_total = round(subtotal * Decimal(instance.tax_percentage), 2) #8.5%
+#         total = round(subtotal + Decimal(tax_total), 2)
+#         instance.tax_total = "%.2f" %(tax_total)
+#         instance.total = "%.2f" %(total)
+#         instance.save()
+#     else:
+#         instance.total = 0.00
+# pre_save.connect(do_tax_and_total_receiver, sender=Cart)
 
 def post_vendor_reciever(instance, created, *args, **kwargs):
     if created:
         Cart.objects.create(vendor=instance)
 post_save.connect(post_vendor_reciever, sender=Vendor)
-
-# def m2m_changed_cart_receiver(sender, instance, action, *args, **kwargs):
-#     if action == 'post_add' or action == 'post_remove' or action == 'post_clear':
-#         products = CartItem.objects.filter(cart=instance)
-#         total = 0
-#         for x in products:
-#             total += x.price
-#         if instance.subtotal != total:
-#             instance.subtotal = total
-#             instance.save()
-# m2m_changed.connect(m2m_changed_cart_receiver, sender=CartItem)

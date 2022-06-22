@@ -1,38 +1,30 @@
 from rest_framework import serializers
 
-from src.address.models import Address
-from src.billing.models import BillingProfile
-
 from src.cart.models import CartItem
 from .mixins import TokenMixin
 
 class CartItemSerializer(serializers.ModelSerializer):
-    item = serializers.SerializerMethodField()
-    item_title = serializers.SerializerMethodField()
+    title = serializers.SerializerMethodField()
     product = serializers.SerializerMethodField()
     price = serializers.SerializerMethodField()
     class Meta:
         model = CartItem
         fields = [
-            "item",
-            "item_title",
+            "title",
             "price",
             "product",
             "quantity",
             "product_total",
         ]
 
-    def get_item(self, obj):
-        return obj.product.id
-
-    def get_item_title(self, obj):
-        return "%s %s" %(obj.product.title, obj.product.title)
+    def get_title(self, obj):
+        return "%s" %(obj.product)
 
     def get_product(self, obj):
         return obj.product.id
 
     def get_price(self, obj):
-        return obj.product.price
+        return obj.product.sale_price
 
 class CheckoutSerializer(TokenMixin, serializers.Serializer):
     nickname = serializers.CharField()

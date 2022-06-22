@@ -35,8 +35,11 @@
                       {% endif %}
                       {% csrf_token %}
                       {% for field in form %}
-                      <div class="form-group">
+                      <div class="form-group row">
+                        <label for="{{ field.id_for_field}}" class="col-sm-2 col-form-label">{{field.label}}</label>
+                        <div class="col-sm-offset-1 col-sm-9">
                           {{field}}
+                        </div>
                         {% for error in field.errors %}
                         <small class="form-text text-muted-danger">{{ error }}</small>
                         {% endfor %}

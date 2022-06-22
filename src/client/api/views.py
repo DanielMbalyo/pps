@@ -8,15 +8,21 @@ from rest_framework import generics
 from rest_framework.permissions import AllowAny
 
 from src.client.models import Client
-from .serializers import ClientSerializer, ClientCreateSerializer
+from .serializers import ClientSerializer, ClientCreateSerializer, ClientFinanceSerializer
 
 class ClientCreateAPIView(generics.CreateAPIView):
-    queryset = Client.objects.all()
     serializer_class = ClientCreateSerializer
     permission_classes = [AllowAny]
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save()
+
+class ClientFinanceAPIView(generics.CreateAPIView):
+    serializer_class = ClientFinanceSerializer
+    permission_classes = [AllowAny]
+
+    def perform_create(self, serializer):
+        serializer.save()
 
 class ClientDetailAPIView(generics.RetrieveAPIView):
     queryset = Client.objects.all()
@@ -33,14 +39,9 @@ class ClientUpdateAPIView(generics.RetrieveUpdateAPIView):
     def perform_update(self, serializer):
         serializer.save(user=self.request.user)
 
-class ClientDeleteAPIView(generics.DestroyAPIView):
-    queryset = Client.objects.all()
-    serializer_class = ClientSerializer
-    lookup_field = 'slug'
-    # permission_classes = [IsOwnerOrReadOnly]
-
 class ClientListAPIView(generics.ListAPIView):
     serializer_class = ClientSerializer
+    permission_classes = [AllowAny]
     filter_backends= [SearchFilter, OrderingFilter]
     search_fields = ['name', 'phone', 'slug', 'account__email']
 

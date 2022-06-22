@@ -9,13 +9,11 @@ from django.views.generic.detail import SingleObjectMixin
 
 from src.account.forms import LoginForm
 
-from src.address.forms import AddressForm
-from src.address.models import Address
-
 from src.billing.models import BillingProfile
 from src.order.models import Order, ProductPurchase
 from src.product.models import Product, UserProduct
 from .models import Cart, CartItem
+from decimal import Decimal
 
 class CartUpdateView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
@@ -23,14 +21,21 @@ class CartUpdateView(LoginRequiredMixin, View):
         if cart:
             item_id = self.kwargs.get('slug')
             if item_id:
-                item = UserProduct.objects.filter(slug=item_id).first()
-                CartItem.objects.create(cart=cart.first(), product=item)
+                product = UserProduct.objects.filter(slug=item_id).first()
+                item = CartItem.objects.create(cart=cart.first(), product=product)
+                subtotal = item.cart.subtotal + Decimal(item.product_total)
+                tax_total = round(subtotal * Decimal(item.cart.tax_percentage), 2) #8.5%
+                total = round(subtotal + Decimal(tax_total), 2)
+                item.cart.subtotal = "%.2f" %(subtotal)
+                item.cart.tax_total = "%.2f" %(tax_total)
+                item.cart.total = "%.2f" %(total)
+                item.cart.save()
                 messages.success(self.request, "Successful Added To Cart")
-                return redirect(item.vendor.get_front_url())
+                return redirect(item.cart.vendor.get_front_url())
             else:
                 messages.success(self.request, "Failed To Add To Cart")
-                return redirect(item.vendor.get_front_url())
-        return redirect(cart.vendor.get_front_url())
+                return redirect(item.cart.vendor.get_front_url())
+        return redirect(item.cart.vendor.get_front_url())
 
 class CartRemoveView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
@@ -38,12 +43,19 @@ class CartRemoveView(LoginRequiredMixin, View):
         if cart:
             item_id = self.kwargs.get('slug')
             if item_id:
-                item = UserProduct.objects.filter(slug=item_id).first()
-                cart_item = CartItem.objects.filter(cart=cart.first(), product=item).first()
-                cart_item.delete()
+                product = UserProduct.objects.filter(slug=item_id).first()
+                item = CartItem.objects.filter(cart=cart.first(), product=product).first()
+                subtotal = item.cart.subtotal - Decimal(item.product_total)
+                tax_total = round(subtotal * Decimal(item.cart.tax_percentage), 2) #8.5%
+                total = round(subtotal + Decimal(tax_total), 2)
+                item.cart.subtotal = "%.2f" %(subtotal)
+                item.cart.tax_total = "%.2f" %(tax_total)
+                item.cart.total = "%.2f" %(total)
+                item.cart.save()
+                item.delete()
                 messages.success(self.request, "Successful Removed From Cart")
-                return redirect(item.vendor.get_front_url())
-        return redirect(cart.vendor.get_front_url())
+                return redirect(item.cart.vendor.get_front_url())
+        return redirect(item.cart.vendor.get_front_url())
 
 class CartClearView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
@@ -56,6 +68,7 @@ class CartClearView(LoginRequiredMixin, View):
                 messages.success(self.request, "Successful Cleared Cart")
             else:
                 messages.success(self.request, "Failed To Clear Cart")
+            cart.clear()
         return redirect(cart.vendor.get_front_url())
 
 class CheckoutView(LoginRequiredMixin, TemplateView):

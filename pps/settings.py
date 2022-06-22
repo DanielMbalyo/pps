@@ -21,7 +21,6 @@ BASE_URL = config('BASE_URL')
 
 INSTALLED_APPS = [
     'src.account',
-    'src.address',
     'src.base',
     'src.billing',
     'src.client',
@@ -52,7 +51,7 @@ FORCE_INACTIVE_USER_ENDSESSION = False
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': ('src.account.api.authentication.SafeJWTAuthentication',),
-    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',),
+    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.AllowAny',),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
 }

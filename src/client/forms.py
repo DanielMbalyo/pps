@@ -2,7 +2,7 @@ import datetime
 from django import forms
 from django.contrib.auth import get_user_model
 from .models import (
-    Client, Finance, GENDER, MARTIAL, IDS, SOURCE, RANGE, STATUS, DURATION
+    Client, Finance, GENDER, MARTIAL, IDS, SOURCE, RANGE, STATUS, DURATION, DEPENDANTS
 )
 
 User = get_user_model()
@@ -62,10 +62,8 @@ class ClientForm(forms.ModelForm):
     class Meta:
         model = Client
         fields = [
-            "first", "middle", "last", "gender", "dob", "citizenship",
-            "region",
-            "district",
-            "street", "martial", "identification", "id_number", "phone"
+            "first", "middle", "last", "gender", "dob", "citizenship", "region",
+            "district", "street", "martial", "identification", "id_number", "phone"
         ]
 
 
@@ -94,13 +92,13 @@ class FinanceForm(forms.ModelForm):
     range = forms.ChoiceField(label='Range', choices=RANGE, required=True,
       widget=forms.Select(attrs={'class': 'form-control'}), 
       help_text='class')
-    dependants = forms.ChoiceField(label='No Of Dependants', choices=RANGE, required=True,
+    dependants = forms.ChoiceField(label='No Of Dependants', choices=DEPENDANTS, required=True,
       widget=forms.Select(attrs={'class': 'form-control'}), 
       help_text='class')
 
     class Meta:
         model = Finance
         fields = [
-            "source", "employer", "referee", "branch", 
+            "status", "source", "employer", "position", "referee", "branch", 
             "duration", "range", "dependants", 
         ]
