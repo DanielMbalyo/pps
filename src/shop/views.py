@@ -17,6 +17,9 @@ from django.template.loader import get_template
 from src.product.models import UserProduct
 from src.cart.models import Cart, CartItem
 
+from src.order.models import Order
+from src.billing.models import BillingProfile, Charge
+
 User = get_user_model()
 
 class ShopPolicyView(TemplateView):
@@ -119,15 +122,13 @@ class ShopView(LoginRequiredMixin, ListView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         vendor = Vendor.objects.filter(slug=self.kwargs.get('slug')).first()
-        shop = Shop.objects.filter(owner=vendor).first()
+        billing = BillingProfile.objects.filter(vendor=vendor).first()
         context['vendor'] = vendor
-        context['shop'] = shop
+        context['shop'] = Shop.objects.filter(owner=vendor).first()
         context['product'] = UserProduct.objects.filter(vendor=vendor).count()
-        # payment = Payment.objects.get(shop=self.get_object())
-        # context['commission'] = Commission.objects.filter(shop=self.get_object(), active=True).aggregate(Sum('amount'))['amount__sum']
-        # context['investment'] = Investment.objects.filter(shop=self.get_object()).aggregate(Sum('amount'))['amount__sum']
-        # context['balance'] = payment.balance
-        # context['withdraw'] = Withdraw.objects.filter(shop=self.get_object()).aggregate(Sum('amount'))['amount__sum']
+        context['orders'] = Order.objects.filter(vendor=vendor).count()
+        context['billing'] = billing
+        context['charges'] = Charge.objects.filter(billing=billing).count()
         return context
 
 class VendorCreateView(CreateView):
@@ -140,6 +141,7 @@ class VendorCreateView(CreateView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context['title'] = 'Vendor Details'
+        context['message'] = 'Details about you, a person who provides services you offer to the customers'
         return context
 
     def form_valid(self, form):
@@ -166,7 +168,8 @@ class ShopCreateView(CreateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context['title'] = 'Shop Details'
+        context['title'] = 'Business Details'
+        context['message'] = 'Details that tells us more about the services you offer to the customers'
         return context
 
     def form_valid(self, form):

@@ -29,29 +29,38 @@
     </div>
     {% include 'commons/messages.html' %}
     <div class="row">
-         <div class="col-md-4 mb-4 stretch-card transparent">
+         <div class="col-md-3 mb-4 stretch-card transparent">
             <div class="card card-tale">
               <div class="card-body">
                 <p class="mb-4">Revenue</p>
-                <p class="fs-30 mb-4">0.00</p>
+                <p class="fs-30 mb-4">{{billing.amount}}</p>
                 <p> </p>
               </div>
             </div>
           </div>
-          <div class="col-md-4 mb-4 stretch-card transparent">
+          <div class="col-md-3 mb-4 stretch-card transparent">
             <div class="card card-dark-blue">
               <div class="card-body">
-                <p class="mb-4">Products</p>
-                <p class="fs-30 mb-4">{% if product %}{{product}}{% else %} 0 {% endif %}</p>
+                <p class="mb-4">No. of Products</p>
+                <p class="fs-30 mb-4">{{product}}</p>
                 <p> </p>
               </div>
             </div>
           </div>
-          <div class="col-md-4 mb-4 stretch-card transparent">
+          <div class="col-md-3 mb-4 stretch-card transparent">
             <div class="card card-light-blue">
               <div class="card-body">
-                <p class="mb-4">Orders</p>
-                <p class="fs-30 mb-4">{% if orders %}{{orders}}{% else %} 0 {% endif %}</p>
+                <p class="mb-4">No. of Orders</p>
+                <p class="fs-30 mb-4">{{orders}}</p>
+                <p> </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 mb-4 stretch-card transparent">
+            <div class="card card-light-blue">
+              <div class="card-body">
+                <p class="mb-4">No. of Transactions</p>
+                <p class="fs-30 mb-4">{{charges}}</p>
                 <p> </p>
               </div>
             </div>

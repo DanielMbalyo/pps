@@ -3,7 +3,7 @@ import os
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import redirect, reverse
+from django.shortcuts import redirect, reverse, get_object_or_404
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView, UpdateView)
 
 from .forms import ProductForm, UserProductForm

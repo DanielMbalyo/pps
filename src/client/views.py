@@ -13,6 +13,9 @@ from django.db.models import Sum
 from django.core.mail import send_mail
 from django.template.loader import get_template
 
+from src.order.models import Order
+from src.billing.models import BillingProfile, Charge
+
 from src.shop.models import Shop
 
 User = get_user_model()
@@ -59,12 +62,12 @@ class ClientView(LoginRequiredMixin, ListView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         client = Client.objects.filter(slug=self.kwargs.get('slug')).first()
-        finance = Finance.objects.filter(client=client).first()
+        billing = BillingProfile.objects.filter(client=client).first()
         context['client'] = client
-        context['finance'] = finance
-        # context['investment'] = Investment.objects.filter(client=self.get_object()).aggregate(Sum('amount'))['amount__sum']
-        # context['balance'] = payment.balance
-        # context['withdraw'] = Withdraw.objects.filter(client=self.get_object()).aggregate(Sum('amount'))['amount__sum']
+        context['finance'] = Finance.objects.filter(client=client).first()
+        context['orders'] = Order.objects.filter(client=client).count()
+        context['billing'] = billing
+        context['charges'] = Charge.objects.filter(billing=billing).count()
         return context
 
 class ClientCreateView(CreateView):
@@ -77,6 +80,7 @@ class ClientCreateView(CreateView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context['title'] = 'Personal Details'
+        context['message'] = 'Details about you, a person who will receive services from our system.'
         return context    
 
     def form_valid(self, form):
@@ -103,7 +107,8 @@ class ClientFinanceView(CreateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context['title'] = 'Income Details'
+        context['title'] = 'Financial Details'
+        context['message'] = 'Details that tells us more about the your eligibility to our services.'
         return context
 
     def form_valid(self, form):

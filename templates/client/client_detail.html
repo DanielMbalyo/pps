@@ -28,38 +28,38 @@
     </div>
     {% include 'commons/messages.html' %}
     <div class="row">
-      <div class="col-md-4 mb-4 stretch-card transparent">
+      <div class="col-md-3 mb-4 stretch-card transparent">
         <div class="card card-tale">
           <div class="card-body">
             <p class="mb-4">Balance</p>
-            <p class="fs-30 mb-4">0</p>
+            <p class="fs-30 mb-4">{{billing.amount}}</p>
             <p> </p>
           </div>
         </div>
       </div>
-      <!-- <div class="col-md-3 mb-4 stretch-card transparent">
+      <div class="col-md-3 mb-4 stretch-card transparent">
         <div class="card card-dark-blue">
           <div class="card-body">
-            <p class="mb-4">No. Of Shops</p>
-            <p class="fs-30 mb-4">{% if shops %}{{shops}}{% else %} 0 {% endif %}</p>
+            <p class="mb-4">Limit</p>
+            <p class="fs-30 mb-4">{{billing.expected}}</p>
             <p> </p>
           </div>
         </div>
-      </div> -->
-      <div class="col-md-4 mb-4 stretch-card transparent">
+      </div>
+      <div class="col-md-3 mb-4 stretch-card transparent">
         <div class="card card-light-blue">
           <div class="card-body">
             <p class="mb-4">No. Of Orders</p>
-            <p class="fs-30 mb-4">{% if investment %}{{investment}}{% else %} 0 {% endif %}</p>
+            <p class="fs-30 mb-4">{{orders}}</p>
             <p> </p>
           </div>
         </div>
       </div>
-      <div class="col-md-4 mb-4 stretch-card transparent">
+      <div class="col-md-3 mb-4 stretch-card transparent">
         <div class="card card-light-danger">
           <div class="card-body">
             <p class="mb-4">No. Of Transactions</p>
-            <p class="fs-30 mb-4">{% if withdraw %}{{withdraw}}{% else %} 0 {% endif %}</p>
+            <p class="fs-30 mb-4">{{charges}}</p>
             <p> </p>
           </div>
         </div>

@@ -80,7 +80,7 @@
 		container: 'map',          
 		style: 'mapbox://styles/mapbox/streets-v11',
 		center: [ 39.2197603, -6.7727897 ], // [ lng, lat ]
-		zoom: 13
+		zoom: 14
 	});
 
 	var geolocate = new mapboxgl.GeolocateControl({
@@ -88,14 +88,14 @@
 		trackUserLocation: true
 	});
 
-  map.addControl(geolocate);
-	geolocate.on('geolocate', function(position) {
-		start = [position.coords.longitude, position.coords.latitude];
-		console.log(`latitude: ${position.coords.latitude}, longitude: ${position.coords.longitude}`);
-	});
+    map.addControl(geolocate);
+    geolocate.on('geolocate', function(position) {
+        start = [position.coords.longitude, position.coords.latitude];
+        console.log(`latitude: ${position.coords.latitude}, longitude: ${position.coords.longitude}`);
+    });
 
   map.on('load', () => {
-		geolocate.trigger();
+		// geolocate.trigger();
 		{% if shops %}
 				{% for shop in shops %}
 				var marker = new mapboxgl.Marker()
