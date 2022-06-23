@@ -161,8 +161,8 @@
                     <td>
                       <div class="btn-group mr-2">
                         <a href="{% url 'account:admin_activate' client.account.uid %}" class="btn btn-sm btn-outline-secondary">Accept</a>
-                        <a href="{% url 'client:reject' obj.slug %}" class="btn btn-sm btn-outline-secondary">Reject</a>
-                        <a href="{% url 'client:inqury' obj.slug %}" class="btn btn-sm btn-outline-secondary">Inqury</a>
+                        <a href="{% url 'client:reject' client.slug %}" class="btn btn-sm btn-outline-secondary">Reject</a>
+                        <a href="{% url 'client:inquire' client.slug %}" class="btn btn-sm btn-outline-secondary">Inqury</a>
                       </div>
                     </td>
                   </tr>

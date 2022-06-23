@@ -13,6 +13,9 @@ from .forms import (ActivateForm, ChangePassForm, LoginForm, ResetPassForm,
 from .models import EmailActivation
 from src.client.forms import ClientForm
 from src.shop.forms import VendorForm
+from src.billing.models import BillingProfile
+from src.client.models import Client
+from src.shop.models import Vendor
 
 User = get_user_model()
 
@@ -48,14 +51,21 @@ class AdminActivateView(TemplateView):
             if request.user.staff:
                 qs = User.objects.filter(uid__iexact=key)
                 if qs.count() > 0:
-                    temp = EmailActivation.objects.create(user=qs.first(), email=qs.first().email)
+                    obj = qs.first()
+                    temp = EmailActivation.objects.create(user=obj, email=obj.email)
                     temp.send_activation()
                     messages.success(request, "Account Is Now Activated.")
-                    if qs.first().staff:
+                    if obj.staff:
                         return redirect('manager:list')
-                    elif qs.first().business:
+                    elif obj.business:
+                        BillingProfile.objects.create(vendor=obj.get_acc(), email=obj.email,)
                         return redirect('shop:list')
                     else:
+                        BillingProfile.objects.create(
+                            client=obj.get_acc(), email=obj.email,
+                            amount=obj.get_acc().evaluate(),
+                            expected=obj.get_acc().evaluate()
+                        )
                         return redirect('client:list')
             else:
                 messages.success(request, "Account Is Not Activated.")

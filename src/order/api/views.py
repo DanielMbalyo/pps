@@ -10,25 +10,74 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from src.billing.models import BillingProfile
-from src.order.models import Order 
+from src.billing.models import BillingProfile, Charge
+from src.order.models import Order, ProductPurchase
 from src.client.models import Client 
 from src.shop.models import Vendor 
 from .permissions import IsOwnerAndAuth
-from .serializers import OrderSerializer, OrderDetailSerializer
+from .serializers import OrderSerializer, PurchaseSerializer
+
+import uuid
 
 User = get_user_model()
 
-class OrderRetrieveAPIView(RetrieveAPIView):
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [IsOwnerAndAuth]
-    model = Order
-    queryset = Order.objects.all()
-    serializer_class = OrderDetailSerializer
+class OrderCompleteAPIView(APIView):
 
-    def get_queryset(self, *args, **kwargs):
-        billing_profile, billing_profile_created = BillingProfile.objects.new_or_get(self.request)
-        return Order.objects.filter(billing_profile=billing_profile)
+    def get(self, request, format=None, **kwargs):
+        client = Client.objects.filter(id=self.kwargs.get('client')).first()
+        order = Order.objects.filter(order_id=self.kwargs.get('id'), client=client).first()
+        bill = BillingProfile.objects.filter(client=client).first()
+        bill1 = BillingProfile.objects.filter(vendor=order.vendor).first()
+        if order and bill and bill1:
+            if bill.amount > order.total:
+                bill.amount = bill.amount - order.total
+                Charge.objects.create(billing=bill, amount=order.total, paid=True)
+                bill.save()
+                bill1.amount = bill1.amount + order.total
+                Charge.objects.create(billing=bill1, amount=order.total, paid=True)
+                bill1.save()
+                order.complete = True
+                order.active = False
+                order.save()
+                data = {
+                    "message" : "Order Payment Successfully"
+                }
+            else:
+                data = {
+                    "message" : "No Enough Funds To Complete Payment"
+                }
+        else:        
+            data = {
+                "message" : "Failed To Process Payment"
+            }
+        return Response(data)
+
+class OrderReceiveAPIView(APIView):
+
+    def get(self, request, format=None, **kwargs):
+        order = Order.objects.filter(order_id=self.kwargs.get('id')).first()
+        client = Client.objects.filter(id=self.kwargs.get('client')).first()
+        order.client = client
+        order.save()
+        data = {
+            "message" : "Order Received Successfully"
+        }
+        return Response(data)
+
+class OrderRetrieveAPIView(APIView):
+
+    def get(self, request, format=None, **kwargs):
+        order = Order.objects.filter(order_id=self.kwargs.get('id')).first()
+        products = ProductPurchase.objects.filter(order=order)
+        items = PurchaseSerializer(products, many=True)
+        data = {
+            "order_id" : order.order_id,
+			"complete" : order.complete, 
+            "active" : order.active,  
+            "total" : order.total,
+            "items": items.data,
+        }
+        return Response(data)
 
 class OrderListAPIView(ListAPIView):
     serializer_class = OrderSerializer

@@ -37,9 +37,15 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="">
+        <a class="nav-link" href="{% url 'billing:charges' %}">
           <i class="icon-paper menu-icon"></i>
-          <span class="menu-title">Support</span>
+          <span class="menu-title">Accounts</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'billing:accounts' %}">
+          <i class="icon-paper menu-icon"></i>
+          <span class="menu-title">Transactions</span>
         </a>
       </li>
     </ul>

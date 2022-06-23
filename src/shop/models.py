@@ -89,7 +89,7 @@ class Shop(models.Model):
     objects = ShopManager()
 
     def __str__(self):
-        return '{}'.format(self.name)
+        return '{}'.format(self.owner)
 
     class Meta:
         ordering = ["-timestamp"]

@@ -1,20 +1,20 @@
 from rest_framework import serializers
 
 from src.order.models import Order, ProductPurchase
+from src.billing.models import BillingProfile, Charge
 from src.product.api.serializers import UserProductListSerializer
 
-class PurchaseSerializer(serializers.ModelSerializer):
-	product = UserProductListSerializer(read_only=True)
+class BillingSerializer(serializers.ModelSerializer):
+
 	class Meta:
-		model = ProductPurchase
+		model = BillingProfile
 		fields = [
-			"client", "vendor", "amount",  
-    		"expected", "email", "active",
+			"product", "quantity", "amount", "refunded",
 		]
 
-class OrderSerializer(serializers.ModelSerializer):
+class ChargeSerializer(serializers.ModelSerializer):
 	class Meta:
-		model = Order
+		model = Charge
 		fields = [
 			"order_id", "vendor", "client",
 			"complete", "active", "total",

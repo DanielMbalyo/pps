@@ -9,7 +9,6 @@ from django.db.models.signals import pre_save, post_save
 from django.shortcuts import reverse, get_object_or_404
 from django.utils import timezone
 
-from src.billing.models import BillingProfile
 from src.cart.models import Cart
 from src.product.models import UserProduct
 from src.client.models import Client
@@ -79,10 +78,6 @@ class OrderManagerQuerySet(models.query.QuerySet):
     def not_refunded(self):
         return self.exclude(status='refunded')
 
-    def by_request(self, request):
-        billing_profile, created = BillingProfile.objects.new_or_get(request)
-        return self.filter(billing_profile=billing_profile)
-
     def not_created(self):
         return self.exclude(status='created')
 
@@ -104,7 +99,7 @@ class Order(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.order_id
+        return self.order_id.__str__()
 
     objects = OrderManager()
 
@@ -242,4 +237,4 @@ class ProductPurchase(models.Model):
     objects = ProductPurchaseManager()
 
     def __str__(self):
-        return self.product.title
+        return self.product.product.title

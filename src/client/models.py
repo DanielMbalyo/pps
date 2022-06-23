@@ -109,6 +109,25 @@ class Client(models.Model):
     def get_absolute_url(self):
         return reverse("client:detail", kwargs={"slug": self.slug})
 
+    def evaluate(self):
+        finance = Finance.objects.filter(client=self).first()
+        if finance:
+            if finance.range == 'Grade 1':
+                return 15000.00
+            elif finance.range == 'Grade 2':
+                return 25000.00
+            elif finance.range == 'Grade 3':
+                return 35000.00
+            elif finance.range == 'Grade 4':
+                return 50000.00
+            elif finance.range == 'Grade 5':
+                return 65000.00
+            elif finance.range == 'Grade 6':
+                return 80000.00
+            elif finance.range == 'Grade 7':
+                return 100000.00
+        else:
+            return 0.00
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify("client-" + str(calendar.timegm(time.gmtime())))
@@ -120,17 +139,17 @@ class Finance(models.Model):
     source = models.CharField(max_length=200,  default='employed', choices=SOURCE)
     employer = models.CharField(max_length=200,  default="None")
     position = models.CharField(max_length=200,  default="None")
-    branch = models.CharField(max_length=200, blank=True, null=True)
+    branch = models.CharField(max_length=200, default="None")
     referee = models.CharField(max_length=200,  default="0712345743")
     duration = models.CharField(max_length=200, default="Duration 1", choices=DURATION)
     range = models.CharField(max_length=200,  default="Grade 1", choices=RANGE)
-    dependants = models.CharField(max_length=200, null=False, blank=True, default='0', choices=DEPENDANTS) 
+    dependants = models.CharField(max_length=200, default='0', choices=DEPENDANTS) 
     timestamp = models.DateTimeField(auto_now_add=True)
 
     objects = ClientManager()
 
     def __str__(self):
-        return '{}'.format(self.name)
+        return '{}'.format(self.client)
 
     class Meta:
         ordering = ["-timestamp"]

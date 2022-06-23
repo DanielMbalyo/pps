@@ -19,6 +19,7 @@ urlpatterns = [
 
 urlpatterns += [
     path('api/account/', include('src.account.api.urls', namespace='account_api')),
+    path('api/billing/', include('src.billing.api.urls', namespace='billing_api')),
     path('api/cart/', include('src.cart.api.urls', namespace='cart_api')),
     path('api/client/', include('src.client.api.urls', namespace='client_api')),
     path('api/order/', include('src.order.api.urls', namespace='order_api')),

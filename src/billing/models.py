@@ -1,35 +1,26 @@
+import datetime
 from django.conf import settings
 from django.db import models
 from django.db.models.signals import post_save, pre_save
 from django.shortcuts import reverse
 from decimal import Decimal 
 from src.client.models import Client
+from src.shop.models import Vendor
+from src.order.models import Order
 
 class BillingProfileManager(models.Manager):
     def new_or_get(self, request):
-        user = request.user
-        guest_email_id = request.session.get('guest_email_id')
-        created = False
-        obj = None
-        if user.is_authenticated:
-            'logged in user checkout; remember payment stuff'
-            obj, created = self.model.objects.get_or_create(user=user, email=user.email)
-        # elif guest_email_id is not None:
-        #     'guest user checkout; auto reloads payment stuff'
-        #     guest_email_obj = GuestMail.objects.get(id=guest_email_id)
-        #     obj, created = self.model.objects.get_or_create(email=guest_email_obj.email)
-        else:
-            pass
-        return obj, created
+        pass
 
 class BillingProfile(models.Model):
-    user = models.OneToOneField(Client, null=True, blank=True, on_delete=models.CASCADE)
+    client = models.OneToOneField(Client, null=True, blank=True, on_delete=models.CASCADE)
+    vendor = models.OneToOneField(Vendor, null=True, blank=True, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    expected = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     email = models.EmailField()
     active = models.BooleanField(default=True)
     update = models.DateTimeField(auto_now=True)
     timestamp = models.DateTimeField(auto_now_add=True)
-    customer_id = models.CharField(max_length=120, null=True, blank=True)
-    # customer_id in Stripe or Braintree
 
     objects = BillingProfileManager()
 
@@ -37,86 +28,7 @@ class BillingProfile(models.Model):
         return self.email
 
     def charge(self, order_obj, card=None):
-        return Charge.objects.do(self, order_obj, card)
-
-    def get_cards(self):
-        return self.card_set.all()
-
-    def get_payment_method_url(self):
-        return reverse('billing:billing-method')
-
-    @property
-    def has_card(self): # instance.has_card
-        card_qs = self.get_cards()
-        return card_qs.exists() # True or False
-
-    @property
-    def default_card(self):
-        default_cards = self.get_cards().filter(active=True, default=True)
-        if default_cards.exists():
-            return default_cards.first()
-        return None
-
-    def set_cards_inactive(self):
-        cards_qs = self.get_cards()
-        cards_qs.update(active=False)
-        return cards_qs.filter(active=True).count()
-
-def billing_created_receiver(sender, instance, *args, **kwargs):
-    # if not instance.customer_id and instance.email:
-    #     customer = stripe.Customer.create(email = instance.email)
-    #     instance.customer_id = customer.id
-    pass
-pre_save.connect(billing_created_receiver, sender=BillingProfile)
-
-def client_created_receiver(sender, instance, created, *args, **kwargs):
-    if created:
-        BillingProfile.objects.get_or_create(user=instance, email=instance.account.email)
-post_save.connect(client_created_receiver, sender=Client)
-
-class CardManager(models.Manager):
-    def all(self, *args, **kwargs): # ModelKlass.objects.all() --> ModelKlass.objects.filter(active=True)
-        return self.get_queryset().filter(active=True)
-
-    def add_new(self, billing_profile, token):
-        if token:
-            customer = stripe.Customer.create_source(billing_profile.customer_id, source=token)
-            new_card = self.model(
-                billing_profile=billing_profile,
-                stripe_id=customer.id,
-                brand=customer.brand,
-                country=customer.country,
-                exp_month=customer.exp_month,
-                exp_year=customer.exp_year,
-                last4=customer.last4,
-            )
-            new_card.save()
-            return new_card
-        return None
-
-class Card(models.Model):
-    billing = models.ForeignKey(BillingProfile, on_delete=models.CASCADE)
-    stripe_id = models.CharField(max_length=120)
-    brand = models.CharField(max_length=120, null=True, blank=True)
-    country = models.CharField(max_length=20, null=True, blank=True)
-    exp_month = models.IntegerField(null=True, blank=True)
-    exp_year = models.IntegerField(null=True, blank=True)
-    last4 = models.CharField(max_length=4, null=True, blank=True)
-    default = models.BooleanField(default=True)
-    active = models.BooleanField(default=True)
-    timestamp = models.DateTimeField(auto_now_add=True)
-
-    objects = CardManager()
-
-    def __str__(self):
-        return "{} {}".format(self.brand, self.last4)
-
-def new_card_post_save_receiver(sender, instance, created, *args, **kwargs):
-    if instance.default:
-        billing = instance.billing
-        qs = Card.objects.filter(billing=billing).exclude(pk=instance.pk)
-        qs.update(default=False)
-post_save.connect(new_card_post_save_receiver, sender=Card)
+        return Charge.objects.do(self, order_obj)
 
 class ChargeManager(models.Manager):
     def do(self, billing, order_obj, card=None): # Charge.objects.do()
@@ -148,9 +60,11 @@ class ChargeManager(models.Manager):
 
 class Charge(models.Model):
     billing = models.ForeignKey(BillingProfile, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
     paid = models.BooleanField(default=False)
     refunded = models.BooleanField(default=False)
     amount = models.DecimalField(default=0.00, max_digits=100, decimal_places=2)
     currency = models.CharField(max_length=120, default="TZS",)
+    date = models.DateField(default=datetime.date.today)
 
     objects = ChargeManager()
