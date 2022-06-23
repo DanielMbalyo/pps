@@ -23,9 +23,9 @@ class CartUpdateView(LoginRequiredMixin, View):
             if item_id:
                 product = UserProduct.objects.filter(slug=item_id).first()
                 item = CartItem.objects.create(cart=cart.first(), product=product)
-                subtotal = item.cart.subtotal + Decimal(item.product_total)
-                tax_total = round(subtotal * Decimal(item.cart.tax_percentage), 2) #8.5%
-                total = round(subtotal + Decimal(tax_total), 2)
+                subtotal = Decimal(item.cart.subtotal) + Decimal(item.product_total)
+                tax_total = subtotal * Decimal(item.cart.tax_percentage) #8.5%
+                total = subtotal + Decimal(tax_total)
                 item.cart.subtotal = "%.2f" %(subtotal)
                 item.cart.tax_total = "%.2f" %(tax_total)
                 item.cart.total = "%.2f" %(total)
@@ -44,10 +44,10 @@ class CartRemoveView(LoginRequiredMixin, View):
             item_id = self.kwargs.get('slug')
             if item_id:
                 product = UserProduct.objects.filter(slug=item_id).first()
-                item = CartItem.objects.filter(cart=cart.first(), product=product).first()
-                subtotal = item.cart.subtotal - Decimal(item.product_total)
-                tax_total = round(subtotal * Decimal(item.cart.tax_percentage), 2) #8.5%
-                total = round(subtotal + Decimal(tax_total), 2)
+                item = CartItem.objects.filter(cart=cart.first(), product=product).distinct().first()
+                subtotal = Decimal(item.cart.subtotal) - Decimal(item.product_total)
+                tax_total = subtotal * Decimal(item.cart.tax_percentage) #8.5%
+                total = subtotal + Decimal(tax_total)
                 item.cart.subtotal = "%.2f" %(subtotal)
                 item.cart.tax_total = "%.2f" %(tax_total)
                 item.cart.total = "%.2f" %(total)

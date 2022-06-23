@@ -11,6 +11,9 @@ from rest_framework.views import APIView
 from .serializers import UserSerializer, LoginSerializer
 from .utils import generate_access_token, generate_refresh_token
 
+from src.client.api.serializers import ClientSerializer
+from src.shop.api.serializers import VendorSerializer
+
 User = get_user_model()
 
 class LoginAPIView(APIView):
@@ -52,12 +55,16 @@ class LoginAPIView(APIView):
                 response.data = {'success': "False", 'message': "Wrong Password.",}
                 return response
             serialized_user = UserSerializer(user.first()).data
+            if user.first().business:
+                account = VendorSerializer(user.first().get_acc()).data
+            else:
+                account = ClientSerializer(user.first().get_acc()).data
             access_token = generate_access_token(user.first())
             refresh_token = generate_refresh_token(user.first())
             response.set_cookie(key='refreshtoken', value=refresh_token, httponly=True)
             response.data = {
                 'success': "True", 'message': "Successfully Authenticated.", 
-                'access_token': access_token, 'user': serialized_user,
+                'access_token': access_token, 'user': serialized_user, 'account': account 
             }
             return response
         else:
