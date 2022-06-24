@@ -12,6 +12,7 @@ from .serializers import UserSerializer, LoginSerializer
 from .utils import generate_access_token, generate_refresh_token
 
 from src.client.api.serializers import ClientSerializer
+from src.billing.api.serializers import BillingSerializer
 from src.shop.api.serializers import VendorSerializer
 
 User = get_user_model()
@@ -57,14 +58,16 @@ class LoginAPIView(APIView):
             serialized_user = UserSerializer(user.first()).data
             if user.first().business:
                 account = VendorSerializer(user.first().get_acc()).data
+                billing = BillingSerializer(BillingProfile.objects.filter(client=user.first().get_acc()).first()).data
             else:
                 account = ClientSerializer(user.first().get_acc()).data
+                billing = BillingSerializer(BillingProfile.objects.filter(client=user.first().get_acc()).first()).data
             access_token = generate_access_token(user.first())
             refresh_token = generate_refresh_token(user.first())
             response.set_cookie(key='refreshtoken', value=refresh_token, httponly=True)
             response.data = {
                 'success': "True", 'message': "Successfully Authenticated.", 
-                'access_token': access_token, 'user': serialized_user, 'account': account 
+                'access_token': access_token, 'user': serialized_user, 'account': account, 'billing': billing
             }
             return response
         else:
