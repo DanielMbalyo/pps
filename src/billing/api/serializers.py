@@ -9,13 +9,13 @@ class BillingSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = BillingProfile
 		fields = [
-			"product", "quantity", "amount", "refunded",
+			"amount", "expected", "active", "update",
 		]
 
 class ChargeSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Charge
 		fields = [
-			"order_id", "vendor", "client",
-			"complete", "active", "total",
+			"paid", "refunded", "amount",
+			"currency", "date",
 		]
