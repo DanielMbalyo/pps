@@ -15,6 +15,8 @@ from src.client.api.serializers import ClientSerializer
 from src.billing.api.serializers import BillingSerializer
 from src.shop.api.serializers import VendorSerializer
 
+from src.billing.models import BillingProfile
+
 User = get_user_model()
 
 class LoginAPIView(APIView):
