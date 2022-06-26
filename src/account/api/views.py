@@ -60,7 +60,7 @@ class LoginAPIView(APIView):
             serialized_user = UserSerializer(user.first()).data
             if user.first().business:
                 account = VendorSerializer(user.first().get_acc()).data
-                billing = BillingSerializer(BillingProfile.objects.filter(client=user.first().get_acc()).first()).data
+                billing = BillingSerializer(BillingProfile.objects.filter(vendor=user.first().get_acc()).first()).data
             else:
                 account = ClientSerializer(user.first().get_acc()).data
                 billing = BillingSerializer(BillingProfile.objects.filter(client=user.first().get_acc()).first()).data

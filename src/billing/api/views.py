@@ -25,32 +25,40 @@ class BillingAPIView(APIView):
     def get(self, request, format=None, **kwargs):
         vendor = self.request.GET.get("vendor")
         client = self.request.GET.get("client")
+        billing = BillingProfile.objects.all()
+        account = BillingSerializer(billing, many=True)
         if vendor:
             vendor = Vendor.objects.filter(id=vendor).first()
             billing = BillingProfile.objects.filter(vendor=vendor).first()
+            account = BillingSerializer(billing)
         elif client:
             client = Client.objects.filter(id=client).first()
             billing = BillingProfile.objects.filter(client=client).first()
-        account = BillingSerializer(billing)
+            account = BillingSerializer(billing)
         data = {
-            "billing" : account.data,
+            "results" : account.data,
         }
         return Response(data)
 
-class ChargeAPIView(ListAPIView):
+class ChargeAPIView(APIView):
     serializer_class = ChargeSerializer
     filter_backends= [SearchFilter, OrderingFilter]
     permission_classes = [AllowAny]
 
-    def get_queryset(self, *args, **kwargs):
-        queryset_list = Charge.objects.all()
+    def get(self, request, format=None, **kwargs):
         vendor = self.request.GET.get("vendor")
         client = self.request.GET.get("client")
+        charges = Charge.objects.all()
         if vendor:
             vendor = Vendor.objects.filter(id=vendor).first()
             billing = BillingProfile.objects.filter(vendor=vendor).first()
+            charges = Charge.objects.filter(billing=billing)
         elif client:
             client = Client.objects.filter(id=client).first()
             billing = BillingProfile.objects.filter(client=client).first()
-        queryset_list = queryset_list.filter(billing=billing).distinct()
-        return queryset_list
+            charges = Charge.objects.filter(billing=billing)
+        account = ChargeSerializer(charges, many=True)
+        data = {
+            "results" : account.data,
+        }
+        return Response(data)

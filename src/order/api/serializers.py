@@ -8,8 +8,8 @@ class PurchaseSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = ProductPurchase
 		fields = [
-			"client", "vendor", "amount",  
-    		"expected", "email", "active",
+			"product", "quantity", "amount",  
+    		"refunded", "updated",
 		]
 
 class OrderSerializer(serializers.ModelSerializer):

@@ -18,6 +18,8 @@ from src.shop.models import Vendor
 from .serializers import CartItemSerializer
 from decimal import Decimal
 
+from src.order.api.serializers import OrderSerializer
+
 User = settings.AUTH_USER_MODEL
 
 class CartAPIView(APIView):
@@ -115,7 +117,7 @@ class CheckoutAPIView(APIView):
                 )
                 obj.delete()
             data = { 
-                "order": order.order_id.__str__(), 
+                "order": OrderSerializer(order).data, 
                 "message": "Order Created Successfully" 
             }
             return Response(data)
