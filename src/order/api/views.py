@@ -28,13 +28,14 @@ class OrderCompleteAPIView(APIView):
         order = Order.objects.filter(order_id=self.kwargs.get('id'), client=client).first()
         bill = BillingProfile.objects.filter(client=client).first()
         bill1 = BillingProfile.objects.filter(vendor=order.vendor).first()
+        print(order, bill, bill1, client)
         if order and bill and bill1:
             if bill.amount > order.total:
                 bill.amount = bill.amount - order.total
-                Charge.objects.create(billing=bill, amount=order.total, paid=True)
+                Charge.objects.create(billing=bill, amount=order.total, paid=True, order=order)
                 bill.save()
                 bill1.amount = bill1.amount + order.total
-                Charge.objects.create(billing=bill1, amount=order.total, paid=True)
+                Charge.objects.create(billing=bill1, amount=order.total, paid=True, order=order)
                 bill1.save()
                 order.complete = True
                 order.active = False
