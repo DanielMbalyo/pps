@@ -13,9 +13,16 @@ class PurchaseSerializer(serializers.ModelSerializer):
 		]
 
 class OrderSerializer(serializers.ModelSerializer):
+	items = serializers.SerializerMethodField()
 	class Meta:
 		model = Order
 		fields = [
 			"order_id", "vendor", "client",
 			"complete", "active", "total",
+			"items",
 		]
+	
+	def get_items(self, obj):
+		products = ProductPurchase.objects.filter(order=obj)
+		return PurchaseSerializer(products, many=True).data
+
