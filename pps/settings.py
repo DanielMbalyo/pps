@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'cloudinary_storage',
+    'cloudinary',
     'corsheaders'
 ]
 
@@ -125,6 +127,12 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dza5ycgh7',
+    'API_KEY': '385279944769652',
+    'API_SECRET': 'CP7ih9FSi5M2amBkWqIkdikB3Uc'
+}
+
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
     os.path.join(BASE_DIR, 'media_cdn'),
@@ -139,6 +147,7 @@ TEMP = os.path.join(BASE_DIR, 'temp')
 PROTECTED_ROOT = os.path.join(os.path.dirname(BASE_DIR), "static", "protected_media")
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
