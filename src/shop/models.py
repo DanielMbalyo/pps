@@ -16,6 +16,12 @@ CATEGORIES = (
     ('restorant', 'Restorant'),
 )
 
+PAYMENT = (
+    ('phone', 'Phone'),
+    ('bank', 'Bank'),
+    ('merchant', 'Merchant'),
+)
+
 class VendorManager(models.Manager):
     def search(self, query):
         lookups = (
@@ -38,6 +44,8 @@ class Vendor(models.Model):
     region = models.CharField(max_length=200, blank=True, null=True)
     district = models.CharField(max_length=200, blank=True, null=True)
     street = models.CharField(max_length=200, blank=True, null=True)
+    means = models.CharField(max_length=200,  default='phone', choices=PAYMENT)
+    number = models.CharField(max_length=50, default="00000000000000")
     phone = models.CharField(max_length=50, unique=True)
     slug = models.SlugField(blank=True, unique=True)
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -79,8 +87,8 @@ class Shop(models.Model):
     district = models.CharField(max_length=200, blank=True, null=True)
     street = models.CharField(max_length=200, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
-    lon = models.CharField(max_length=200, blank=True, null=True)
-    lat = models.CharField(max_length=200, blank=True, null=True)
+    lon = models.CharField(max_length=200, default="0.000000")
+    lat = models.CharField(max_length=200, default="0.000000")
     opening = models.CharField(max_length=200, blank=True, null=True)
     closing = models.CharField(max_length=200, blank=True, null=True)
     slug = models.SlugField(blank=True, unique=True)

@@ -1,6 +1,6 @@
 import datetime
 from django import forms
-from .models import Shop, Vendor, GENDER, CATEGORIES
+from .models import Shop, Vendor, GENDER, CATEGORIES, PAYMENT
 
 class InquiryForm(forms.Form):
     inqury = forms.CharField(label='Reply', widget=forms.Textarea(
@@ -38,7 +38,12 @@ class VendorForm(forms.ModelForm):
     gender = forms.ChoiceField(label='Gender', choices=GENDER, required=True,
       widget=forms.Select(attrs={'class': 'form-control'}),
       help_text='class')
-      
+    means = forms.ChoiceField(label='Payment Means', choices=PAYMENT, required=True,
+      widget=forms.Select(attrs={'class': 'form-control'}),
+      help_text='class')
+    number = forms.CharField(label='Payment Number', widget=forms.TextInput(
+        attrs={'class': 'form-control', 'placeholder':'Payment Number'}
+    ), help_text='class')
 
     class Meta:
         model = Vendor
@@ -53,6 +58,8 @@ class VendorForm(forms.ModelForm):
             "district",
             "street",
             "phone",
+            "means",
+            "number",
         ]
 
 class ShopForm(forms.ModelForm):
