@@ -114,3 +114,18 @@ class ShopForm(forms.ModelForm):
             "closing",
             "description",
         ]
+
+class LocationForm(forms.ModelForm):
+    lon = forms.CharField(label='Longitude', widget=forms.TextInput(
+        attrs={'class': 'form-control', 'placeholder':'Longitude'}
+    ), help_text='class')
+    lat = forms.CharField(label='Latitude', widget=forms.TextInput(
+        attrs={'class': 'form-control', 'placeholder':'Latitude'}
+    ), help_text='class')
+
+    class Meta:
+        model = Shop
+        fields = [
+            "lat",
+            "lon", 
+        ]

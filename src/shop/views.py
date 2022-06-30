@@ -8,7 +8,7 @@ from django.views.generic import (
 )
 from itertools import chain
 from .models import Shop, Vendor
-from .forms import ShopForm, VendorForm, InquiryForm
+from .forms import ShopForm, VendorForm, InquiryForm, LocationForm
 from django.db.models import Sum
 from django.http import JsonResponse
 from django.core.mail import send_mail
@@ -257,6 +257,25 @@ class ShopUpdateView(LoginRequiredMixin, UpdateView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context['title'] = 'Update Shop'
+        return context
+
+    def form_valid(self, form):
+        shop = form.save(commit=False)
+        messages.success(self.request, "Successfully Updated")
+        shop.save()
+        return super(ShopUpdateView, self).form_valid(form)
+
+class ShopLocationView(LoginRequiredMixin, UpdateView):
+    model = Shop
+    form_class = LocationForm
+    template_name = 'shop/shop_form.html'
+
+    def get_success_url(self):
+        return reverse('shop:list')
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['title'] = 'Update Location'
         return context
 
     def form_valid(self, form):

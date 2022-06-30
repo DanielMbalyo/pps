@@ -15,4 +15,5 @@ urlpatterns = [
     path('<slug>/front/', views.ShopFrontView.as_view(), name="front"),
     path('<slug>/product/', views.ShopProductView.as_view(), name="product"),
     path('<slug>/update/', views.ShopUpdateView.as_view(), name="update"),
+    path('<slug>/location/', views.ShopLocationView.as_view(), name="location"),
 ]

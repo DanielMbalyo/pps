@@ -156,6 +156,7 @@
                         <a href="{% url 'account:admin_activate' vendor.account.uid %}" class="btn btn-sm btn-success">Accept</a>
                         <a href="{% url 'shop:reject' vendor.slug %}" class="btn btn-sm btn-danger">Reject</a>
                         <a href="{% url 'shop:inquire' vendor.slug %}" class="btn btn-sm btn-primary">Inqury</a>
+                        <a href="{% url 'shop:location' shop.slug %}" class="btn btn-sm btn-secondary">Location</a>
                       </div>
                     </td>
                   </tr>
