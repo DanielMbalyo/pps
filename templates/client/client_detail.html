@@ -92,7 +92,7 @@
                   </tr>
                   <tr>
                     <td>Location</td>
-                    <td>{{client.location}}</td>
+                    <td>{{client.region}}, {{client.district}}</td>
                   </tr>
                   <tr>
                     <td>Martial Status</td>
@@ -137,7 +137,7 @@
                   </tr>
                   <tr>
                     <td>Employer/Business Referee</td>
-                    <td>{{finance.referee}}</td>
+                    <td>{{finance.referee_name}}, {{finance.referee_number}}</td>
                   </tr>
                   <tr>
                     <td>Employment/Business Duration</td>
@@ -160,9 +160,9 @@
                     <td>Actions</td>
                     <td>
                       <div class="btn-group mr-2">
-                        <a href="{% url 'account:admin_activate' client.account.uid %}" class="btn btn-sm btn-outline-secondary">Accept</a>
-                        <a href="{% url 'client:reject' client.slug %}" class="btn btn-sm btn-outline-secondary">Reject</a>
-                        <a href="{% url 'client:inquire' client.slug %}" class="btn btn-sm btn-outline-secondary">Inqury</a>
+                        <a href="{% url 'account:admin_activate' client.account.uid %}" class="btn btn-sm btn-success">Accept</a>
+                        <a href="{% url 'client:reject' client.slug %}" class="btn btn-sm btn-danger">Reject</a>
+                        <a href="{% url 'client:inquire' client.slug %}" class="btn btn-sm btn-primary">Inqury</a>
                       </div>
                     </td>
                   </tr>

@@ -61,7 +61,8 @@ class OrderReceiveAPIView(APIView):
         order.client = client
         order.save()
         data = {
-            "message" : "Order Received Successfully"
+            "message" : "Order Received Successfully",
+            "data" : OrderReceiver(order).data
         }
         return Response(data)
 

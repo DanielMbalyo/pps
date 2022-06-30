@@ -68,10 +68,10 @@ class ClientForm(forms.ModelForm):
 
 
 class FinanceForm(forms.ModelForm):
-    status = forms.ChoiceField(label='Status', choices=STATUS, required=True,
+    status = forms.ChoiceField(label='Status Of Employment', choices=STATUS, required=True,
       widget=forms.Select(attrs={'class': 'form-control'}),
      help_text='class')
-    source = forms.ChoiceField(label='Source', choices=SOURCE, required=True,
+    source = forms.ChoiceField(label='Source Of Income', choices=SOURCE, required=True,
       widget=forms.Select(attrs={'class': 'form-control'}),
      help_text='class')
     employer = forms.CharField(label='Company/Employer Name', widget=forms.TextInput(
@@ -80,7 +80,10 @@ class FinanceForm(forms.ModelForm):
     position = forms.CharField(label='Employement Position', widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder':'Employement Position'}
     ), help_text='class')
-    referee = forms.CharField(label='Referee Phone', widget=forms.TextInput(
+    referee_name = forms.CharField(label='Referee  Name', widget=forms.TextInput(
+        attrs={'class': 'form-control', 'placeholder':'Referee Name'}
+    ), help_text='class')
+    referee_number = forms.CharField(label='Referee Phone', widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder':'Referee Phone'}
     ), help_text='class')
     branch = forms.CharField(label='Business/Office Location', widget=forms.TextInput(
@@ -99,6 +102,6 @@ class FinanceForm(forms.ModelForm):
     class Meta:
         model = Finance
         fields = [
-            "status", "source", "employer", "position", "referee", "branch", 
-            "duration", "range", "dependants", 
+            "status", "source", "employer", "position", "referee_name",
+             "referee_number", "branch", "duration", "range", "dependants", 
         ]

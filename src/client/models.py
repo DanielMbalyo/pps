@@ -29,6 +29,7 @@ STATUS = (
 )
 
 SOURCE = (
+    ('employment', 'Employment'),
     ('consultant', 'Consultant'),
     ('business', 'Business'),
     ('freelance', 'Freelance'),
@@ -140,7 +141,8 @@ class Finance(models.Model):
     employer = models.CharField(max_length=200,  default="None")
     position = models.CharField(max_length=200,  default="None")
     branch = models.CharField(max_length=200, default="None")
-    referee = models.CharField(max_length=200,  default="0712345743")
+    referee_name = models.CharField(max_length=200,  default="None")
+    referee_number = models.CharField(max_length=200,  default="0712345743")
     duration = models.CharField(max_length=200, default="Duration 1", choices=DURATION)
     range = models.CharField(max_length=200,  default="Grade 1", choices=RANGE)
     dependants = models.CharField(max_length=200, default='0', choices=DEPENDANTS) 

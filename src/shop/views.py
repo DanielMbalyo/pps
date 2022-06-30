@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import reverse, get_object_or_404
 from django.views.generic import (
-    CreateView, UpdateView, DetailView, ListView, TemplateView
+    CreateView, UpdateView, DetailView, ListView, TemplateView, FormView
 )
 from itertools import chain
 from .models import Shop, Vendor
@@ -13,6 +13,7 @@ from django.db.models import Sum
 from django.http import JsonResponse
 from django.core.mail import send_mail
 from django.template.loader import get_template
+from django.conf import settings
 
 from src.product.models import UserProduct
 from src.cart.models import Cart, CartItem
@@ -180,7 +181,7 @@ class ShopCreateView(CreateView):
         messages.success(self.request, "Successfully Created")
         return super(ShopCreateView, self).form_valid(form)
 
-class ShopInquireView(CreateView):
+class ShopInquireView(FormView):
     form_class = InquiryForm
     template_name = 'shop/shop_form.html'
 
@@ -194,7 +195,7 @@ class ShopInquireView(CreateView):
 
     def form_valid(self, form):
         instance = get_object_or_404(Vendor, slug=self.kwargs.get('slug'))
-        inqury = self.request.POST.get("inqury")
+        inquiry = self.request.POST.get("inqury")
         context = {'reason': inquiry,}
         txt_ = get_template("account/emails/reply.txt").render(context)
         html_ = get_template("account/emails/reply.html").render(context)
@@ -204,7 +205,7 @@ class ShopInquireView(CreateView):
         messages.success(self.request, "Email Successfully Sent")
         return super(ShopInquireView, self).form_valid(form)
 
-class ShopRejectView(CreateView):
+class ShopRejectView(FormView):
     form_class = InquiryForm
     template_name = 'shop/shop_form.html'
 
@@ -218,7 +219,7 @@ class ShopRejectView(CreateView):
 
     def form_valid(self, form):
         instance = get_object_or_404(Vendor, slug=self.kwargs.get('slug'))
-        inqury = self.request.POST.get("inqury")
+        inquiry = self.request.POST.get("inqury")
         context = {'reason': inquiry,}
         txt_ = get_template("account/emails/reply.txt").render(context)
         html_ = get_template("account/emails/reply.html").render(context)

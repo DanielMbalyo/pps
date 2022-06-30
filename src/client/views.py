@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import reverse, get_object_or_404
 from django.views.generic import (
-    CreateView, UpdateView, DetailView, ListView, TemplateView
+    CreateView, UpdateView, DetailView, ListView, TemplateView, FormView
 )
 from itertools import chain
 from .models import Client, Finance
@@ -12,6 +12,7 @@ from .forms import ClientForm, FinanceForm, InquiryForm
 from django.db.models import Sum
 from django.core.mail import send_mail
 from django.template.loader import get_template
+from django.conf import settings
 
 from src.order.models import Order
 from src.billing.models import BillingProfile, Charge
@@ -119,7 +120,7 @@ class ClientFinanceView(CreateView):
         messages.success(self.request, "Successfully Created")
         return super(ClientFinanceView, self).form_valid(form)
 
-class ClientInquireView(CreateView):
+class ClientInquireView(FormView):
     form_class = InquiryForm
     template_name = 'client/client_form.html'
 
@@ -133,7 +134,7 @@ class ClientInquireView(CreateView):
 
     def form_valid(self, form):
         instance = get_object_or_404(Client, slug=self.kwargs.get('slug'))
-        inqury = self.request.POST.get("inqury")
+        inquiry = self.request.POST.get("inqury")
         context = {'reason': inquiry,}
         txt_ = get_template("account/emails/reply.txt").render(context)
         html_ = get_template("account/emails/reply.html").render(context)
@@ -143,7 +144,7 @@ class ClientInquireView(CreateView):
         messages.success(self.request, "Email Successfully Sent")
         return super(ClientInquireView, self).form_valid(form)
 
-class ClientRejectView(CreateView):
+class ClientRejectView(FormView):
     form_class = InquiryForm
     template_name = 'client/client_form.html'
 

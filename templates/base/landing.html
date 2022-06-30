@@ -4,11 +4,27 @@
 {% block content %}
 {% load static %}
 <style type="text/css">
-#mobile{
-  background-image: linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)), url('{% static "images/phone.jpg" %}');
+#home{
+  background-image:  linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.8)), url('{% static "images/cover.jpg" %}');
   background-size: cover;
   background-repeat: no-repeat;
 }
+#client{
+  background-image: linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)), url('{% static "images/client.jpg" %}');
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+#vendor{
+  background-image: linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)), url('{% static "images/vendor.jpg" %}');
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+#mobile{
+  background-image: linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)), url('{% static "images/mobile-1.jpg" %}');
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
 @media only screen and (max-width: 768px) {
 .display-2{
   font-size: 50px;
@@ -27,7 +43,77 @@
 }
 }
 </style>
-<section class="container-fluid" style="background-color:darkcyan; color: ghostwhite; height: 100vh;">
+<style type="text/css">
+  .cover{
+      height: 100vh;
+  }
+</style>
+<section class="h-100 container-fluid" id="home">
+  <div class="row h-100">
+    <div class="text-left col-12 mt-auto">
+      <div class="container">
+        <div class="row">
+          <div class="col-12 p-5 text-white">
+            <h3 class="display-5">Welcome to</h1>
+            <h1 class="display-2">Post Payment System!</h1>
+            <p>We help customers with constant income flow to get services from wherever the service  <br>
+              providers are in credit where we will support by being guarantor for the credit purchasing. <br></p>
+            <p><a class="btn btn-outline-light btn-lg px-5 px-4 my-2" href="{% url 'account:login' %}" role="button">Get stated</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="container-fluid h-100" style="background-color:darkcyan; color: ghostwhite;">
+  <div class="row h-100">
+    <div class="text-left col-md-6 col-12 d-none d-md-block" id="client">
+      <div class="container">
+        <div class="row">
+          <div class="col-12"></div>
+        </div>
+      </div>
+    </div>
+    <div class="text-center text-lg-left col-md-6 col-12 my-auto">
+      <div class="container">
+        <div class="row">
+          <div class="col-12 p-5">
+            <h2 class="display-4">Are You In Need Of Services, With Insufficient Credit?</h2>
+          <p class="lead">Dont Worry, Get Goods And Services From Our Vast Network <br> Of Nearby Vendors And Pay Us Later.</p>
+          <div class="text-center text-lg-left">
+            <a class="btn btn-outline-light btn-lg px-5 px-4 my-2" href="{% url 'account:register' %}" role="button">Register Now</a>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="container-fluid h-100" style="background-color:darkcyan; color: ghostwhite;">
+  <div class="row h-100">
+    <div class="text-center text-lg-right col-md-6 col-12 my-auto">
+      <div class="container">
+        <div class="row">
+          <div class="col-12 p-5">
+            <h2 class="display-4">Are You a Service Provider And Clients Want To Borrow From Your Business?</h2>
+          <p class="lead">Weve Got You Covered, Register Your Store With Us And <br>Sell With Reliable and Instant Payments.</p>
+          <div class="text-center text-lg-right">
+            <a class="btn btn-outline-light btn-lg px-5 px-4 my-2" href="{% url 'account:register' %}" role="button">Register Now</a>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="text-left col-md-6 col-12 d-none d-md-block" id="vendor">
+      <div class="container">
+        <div class="row">
+          <div class="col-12"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="container-fluid h-100" style="background-color:darkcyan; color: ghostwhite;">
   <div class="row h-100">
     <div class="text-left col-md-6 col-12 d-none d-md-block" id="mobile">
       <div class="container">
@@ -40,11 +126,11 @@
       <div class="container">
         <div class="row">
           <div class="col-12 p-5">
-            <h2 class="display-4">Purchase Even When You Are short of cash.</h2>
-          <p class="lead">Now Simple, Fast And Agile.</p>
+            <h2 class="display-4">Explore Your Desired Needs Or Sell Anywhere, Anytime.</h2>
+          <p class="lead">Now Simple, Fast And Agile Across Every Mobile Device.<br> Get Your App Now </p>
           <div class="text-center text-lg-left">
-            <a class="btn btn-outline-light btn-lg px-5 px-4 my-2" href="{% url 'account:login' %}" role="button">Get Started</a>
-            <!-- <a class="btn btn-outline-light btn-lg px-5 px-4 my-2" href="" role="button">Shop</a> -->
+            <a class="btn btn-outline-light btn-lg px-5 px-4 my-2" href="" role="button">Play Store</a>
+            <a class="btn btn-outline-light btn-lg px-5 px-4 my-2" href="" role="button">App Store</a>
           </div>
           </div>
         </div>
@@ -52,9 +138,78 @@
     </div>
   </div>
 </section>
+
+  <section class="h-100 container-fluid" style="color:darkcyan;">
+    <div class="row h-100">
+      <div class="text-center col-12 my-auto">
+        <div class="container">
+          <div class="row">
+            <div class="col-12 p-5">
+              <h1 class="display-4">Things We Value Most About Our Customers.</h1>
+              <p>Let's talk addictions, localism, friends and ministry <br>
+                  eiusmod tempor incididunt ut labore et dolore magna aliqua. <br>
+                  Ut enim ad minim veniam quis nostrud exercitation ullamco laboris</p>
+              <div class="container row p-3">
+                <div class="col text-center">
+                  
+                </div>
+                
+                <div class="col text-center">
+                 
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="container-fluid" style="background-color:darkcyan; color: ghostwhite;">
+    <div class="row py-5 h-50">
+      <div class="text-center col-md-6 col-12 my-auto">
+        <div class="container">
+          <div class="row">
+            <div class="col-12 p-5">
+              <h2 class="display-4">Stay Updated With The Latest From Us</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="text-center col-md-6 col-12 my-auto">
+        <div class="container">
+          <div class="row">
+            <div class="col-12">{% for non_field_error in form.non_field.errors %}
+              <div class="alert alert-danger" role="alert">{{ error }}</div>
+              {% endfor %}
+              {% if form.is_multipart %}
+              <form enctype="multipart/form-data" method="post">
+                {% else %}
+                <form method="post">
+                  {% endif %}
+                  {% csrf_token %}
+                  {% for field in form %}
+                  <div class="form-group row">
+                    <!-- <label for="{{ field.id_for_field}}" class="col-sm-2 col-form-label">{{field.label}}</label> -->
+                    <div class="col-sm-12">
+                      {{field}}
+                    </div>
+                    {% for error in field.errors %}
+                    <small class="form-text text-muted-danger">{{ error }}</small>
+                    {% endfor %}
+                  </div>
+                  {% endfor%}
+                  <div class="text-center">
+                    <button type="submit" class="btn btn-outline-light btn-lg btn-block">SUBSCRIBE NOW</button>
+                  </div>
+                </form></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 {% endblock %}
 {% block footer %}
-<!-- <footer class="footer py-3" style="background-color:darkcyan; color: ghostwhite;">
+<footer class="footer py-3" style="background-color:darkcyan; color: ghostwhite;">
   <div class="container">
       <div class="row">
           <div class="col-lg-6 my-auto h-100 text-center text-lg-left  text-white">
@@ -69,7 +224,7 @@
                 <li class="list-inline-item"><span>⋅</span></li>
                 <li class="list-inline-item"><a href="" class="text-white">FAQ</a></li>
               </ul>
-              <p class="small mb-4 mb-lg-0 text-white">© PPS 2021. All Rights Reserved.</p>
+              <p class="small mb-4 mb-lg-0 text-white">© BrightVenue 2020. All Rights Reserved.</p>
           </div>
           <div class="col-lg-6 my-auto h-100 text-center text-lg-right">
               <ul class="list-inline mb-0">
@@ -80,5 +235,5 @@
           </div>
       </div>
   </div>
-</footer> -->
+</footer>
 {% endblock %}

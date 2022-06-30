@@ -74,12 +74,12 @@ class ShopForm(forms.ModelForm):
     tin_number = forms.CharField(label='Tin Number', widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder':'Tin Number'}
     ), help_text='class')
-    lon = forms.CharField(label='Longitude', widget=forms.TextInput(
-        attrs={'class': 'form-control', 'placeholder':'Longitude'}
-    ), help_text='class')
-    lat = forms.CharField(label='Latitude', widget=forms.TextInput(
-        attrs={'class': 'form-control', 'placeholder':'Latitude'}
-    ), help_text='class')
+    # lon = forms.CharField(label='Longitude', widget=forms.TextInput(
+    #     attrs={'class': 'form-control', 'placeholder':'Longitude'}
+    # ), help_text='class')
+    # lat = forms.CharField(label='Latitude', widget=forms.TextInput(
+    #     attrs={'class': 'form-control', 'placeholder':'Latitude'}
+    # ), help_text='class')
     opening = forms.CharField(label='Opening', widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder':'Opening'}
     ), help_text='class')
@@ -103,8 +103,6 @@ class ShopForm(forms.ModelForm):
             "region",
             "district",
             "street",
-            "lon",
-            "lat",
             "opening",
             "closing",
             "description",
