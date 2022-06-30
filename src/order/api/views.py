@@ -41,14 +41,17 @@ class OrderCompleteAPIView(APIView):
                 order.active = False
                 order.save()
                 data = {
+                    'success': True,
                     "message" : "Order Payment Successfully"
                 }
             else:
                 data = {
+                    'success': False,
                     "message" : "No Enough Funds To Complete Payment"
                 }
         else:        
             data = {
+                'success': False,
                 "message" : "Failed To Process Payment"
             }
         return Response(data)
@@ -62,7 +65,7 @@ class OrderReceiveAPIView(APIView):
         order.save()
         data = {
             "message" : "Order Received Successfully",
-            "data" : OrderReceiver(order).data
+            "data" : OrderSerializer(order).data
         }
         return Response(data)
 
