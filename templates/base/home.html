@@ -28,11 +28,11 @@
                         <div class="row"> 
                             <div class="col-9">
                                 <p class="card-text m-0 px-1"><small class="m-0">{{ obj.sale_price }}</small></p>
-                                <!-- <p class="card-text m-0 px-1"><small class="">X Meters Away</small></p> -->
+                                <p class="card-text m-0 px-1"><small class="">{{ obj.vendor.get_shop.name}}</small></p>
                             </div>
                             <div class="col-3 pt-2">
                                 <div class="btn-group py-auto" >
-                                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="getDirections()">
+                                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="getDirections([obj.vendor.get_shop.lon, obj.vendor.get_shop.lat ])">
                                     Directions</button>
                                 </div>
                             </div>
@@ -106,9 +106,9 @@
 		{% elif products %}
 				{% for product in products %}
 				var marker = new mapboxgl.Marker()
-						.setLngLat(["{{ product.vendor.lon }}", "{{ product.vendor.lat }}"])
-						.setPopup(new mapboxgl.Popup().setHTML("<p>{{ product.product }}</p>"))
-						.addTo(map);
+                    .setLngLat(["{{ product.vendor.get_shop.lon }}", "{{ product.vendor.get_shop.lat }}"])
+                    .setPopup(new mapboxgl.Popup().setHTML("<p>{{ product.product }}</p>"))
+                    .addTo(map);
 				{% endfor %}
 		{% endif %}
 
@@ -152,7 +152,6 @@
 			for (const coord of coordinates) { bounds.extend(coord); }
 			map.fitBounds(bounds, { padding: 20 });
 		}
-
 	}
 </script>
 {% endblock %}

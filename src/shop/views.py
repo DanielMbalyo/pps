@@ -282,4 +282,4 @@ class ShopLocationView(LoginRequiredMixin, UpdateView):
         shop = form.save(commit=False)
         messages.success(self.request, "Successfully Updated")
         shop.save()
-        return super(ShopUpdateView, self).form_valid(form)
+        return super(ShopLocationView, self).form_valid(form)

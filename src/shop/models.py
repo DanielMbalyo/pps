@@ -63,6 +63,9 @@ class Vendor(models.Model):
 
     def get_front_url(self):
         return reverse("shop:front", kwargs={"slug": self.slug})
+    
+    def get_shop(self):
+        return Shop.objects.filter(owner=self).first()
 
     def save(self, *args, **kwargs):
         if not self.slug:
